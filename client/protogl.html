@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>proto GL</title>
+<meta charset="utf-8">
+
+<style type="text/css">
+body {
+background-color: #000000;
+margin: 0px;
+overflow: hidden;
+}
+</style>
+
+</head>
+<body>
+<script src="js/Three.js"></script>
+<script>
+var myId;
+var playersInfo;
+var frameCount = 0;
+// moving vars
+var movingDown0 = false;
+var movingUp0 = false;
+var movingLeft0 = false;
+var movingRight0 = false;
+
+// key listeners
+var keydown = function(e){ 
+  if(e.keyCode == 37)
+	movingLeft0 = true;
+  if(e.keyCode == 38)
+	movingUp0 = true;
+  if(e.keyCode == 39)
+    movingRight0 = true;
+  if(e.keyCode == 40)
+    movingDown0 = true;
+}
+var keyup = function(e){
+  if(e.keyCode == 37)
+	movingLeft0 = false;
+  if(e.keyCode == 38)
+	movingUp0 = false;
+  if(e.keyCode == 39)
+    movingRight0 = false;
+  if(e.keyCode == 40)
+    movingDown0 = false;
+	
+}
+
+document.addEventListener("keydown",keydown,false);
+document.addEventListener("keyup",keyup,false);
+
+// the main three.js components
+var camera, scene, renderer,
+
+
+// particules
+particles = [];
+ennemyParticles = [];
+
+init();
+
+function init() 
+{
+
+// Camera params :
+// field of view, aspect ratio for render output, near and far clipping plane.
+camera = new THREE.Camera(80, window.innerWidth / window.innerHeight, 1, 4000 );
+
+// move the camera backwards so we can see stuff!
+// default position is 0,0,0.
+camera.position.z = 1000;
+
+scene = new THREE.Scene();
+
+
+renderer = new THREE.CanvasRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+
+document.body.appendChild( renderer.domElement );
+
+makePlayerParticles();
+
+
+// render 30 times a second
+setInterval(update,1000/30);
+}
+
+// update de l etat du jeu
+function update() 
+{
+	updatePlayerParticle();
+	moveMultiPlayerParticles();
+	renderer.render( scene, camera );
+}
+
+function moveMultiPlayerParticles()
+{
+	// récuperation des coordonnées des autres joueurs
+	var jsonStr = ""; // todo request player coord
+	var myObject = eval('(' + jsonStr + ')');
+	for (var i = 0; i < myObject.length; i++)
+	{
+		if(myId != myObject[i]['id'])
+		{
+			particles[i].position.x = myObject[i]['x'];
+			particles[i].position.y = myObject[i]['y'];
+		}
+	}
+}
+
+function connectPlayer()
+{
+	// récuperation myID et playersInfo
+}
+
+// initialisation des particules des joueurs
+function makePlayerParticles()
+{
+
+	var particle, material;
+
+	for(var i = 0; i < playersInfo.length ; i++)
+	{
+		material = new THREE.ParticleCanvasMaterial( { color: 0xffffff, program: particleRender } );
+		particle = new THREE.Particle(material);
+
+		particle.position.x = playersInfo[i]['x'];
+		particle.position.y = playersInfo[i]['y'];
+		particle.position.z = 50;
+		particle.scale.x = particle.scale.y = 10;
+
+		scene.addObject(particle);
+		particles.push(particle);
+	}
+}
+
+
+function particleRender( context ) 
+{
+context.beginPath();
+context.arc( 0, 0, 1, 0, Math.PI * 2, true );
+context.fill();
+};
+
+
+// déplacement de la particule du joueur
+function updatePlayerParticle()
+{
+	frameCount++;
+	particle0 = particles[myId];
+		
+	if(movingUp0 == true && particle0.position.y < 780)
+		particle0.position.y += 10;
+	if(movingDown0 == true && particle0.position.y > -780)
+		particle0.position.y -= 10;
+	if(movingLeft0 == true && particle0.position.x > -1450 )
+		particle0.position.x -= 10;
+	if(movingRight0 == true && particle0.position.x < 1450)
+		particle0.position.x += 10;
+		
+}
+
+</script>
+</body>
+</html>
+
