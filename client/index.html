@@ -63,7 +63,7 @@ function init() {
        game.players.moveMe(movingUp0, movingDown0, movingLeft0, movingRight0);
        frameCount++;
        if(frameCount%6 == 0) {
-           Game.move(players.me.position.x, players.me.position.y);
+           game.move(game.players.me.position.x, game.players.me.position.y);
        }
        scene.renderer.render( scene.scene, scene.camera );
    }

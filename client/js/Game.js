@@ -10,33 +10,36 @@ function Game() {
     };
 
     this.move = function(x, y) {
-        socket.emit('move', '{"x":'+x+', "y":'+y+'}');
+        this.socket.emit('move', '{"x":'+x+', "y":'+y+'}');
     };
 
     this.init = function() {
-	var socket = io.connect(HOST, {port:PORT});
+	this.socket = io.connect(HOST, {port:PORT});
 	var game = this;
 
-	socket.on('connect', function (data) {
+	this.socket.on('connect', function (data) {
             game.info('connected!');
 	});
 
-	socket.on('welcome', function(data) {
+	this.socket.on('welcome', function(data) {
             game.info('I am '+data.id+' Spawn point: x='+data.x+' y='+data.y);
             init();
 	    game.players.makeMe(data);
 	});
 
-	socket.on('new_player', function(data) {
+	this.socket.on('new_player', function(data) {
             game.info('New player '+data.id+' Spawn point: x='+data.x+' y='+data.y);
 	    game.players.makePlayerParticle(data);
 	});
 
-	socket.on('players', function (data) {
-	    game.players.updateOtherParticles(data);
+	this.socket.on('players', function (data) {
+		if (Object.keys(game.players.particles).length)
+			game.players.updateOtherParticles(data);
+		else
+			game.players.makePlayersParticles(data);
 	});
 
-	socket.on('this.info', function (data) {
+	this.socket.on('this.info', function (data) {
             game.info(data);
 	});
     };

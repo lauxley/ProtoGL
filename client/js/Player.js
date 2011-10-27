@@ -9,14 +9,18 @@ function players() {
     },
 
     this.makePlayerParticle = function(data) {
-	return scene.makeParticle(data);
+	 if(data)
+		this.particles[data.id] = scene.makeParticle(data);
     }
 
     this.makePlayersParticles = function(data)
     {
 	for(var i = 0; i < data.length ; i++)
 	{
-	    this.makePlayerParticle(data[i]);
+	    if(data[i] && data[i].id != this.me.id)
+		{
+			this.makePlayerParticle(data[i]);
+		}
 	}
     },
 
@@ -39,7 +43,7 @@ function players() {
     {
 	for(var i=0; i<data.length; i++) 
 	{
-		if(data[i] && data[i].id != me.id)
+		if(data[i] && data[i].id != this.me.id)
 		{
 			this.particles[data[i].id].position.x = data[i]['x'];
 			this.particles[data[i].id].position.y = data[i]['y'];
