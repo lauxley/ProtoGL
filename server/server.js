@@ -12,35 +12,21 @@ var broadcast = function(type, msg) {
 };
 
 var app = require('http').createServer(function (req, res) {
-    console.log(req.url);
-    switch (req.url) {
+    var _path = '';
+    if (req.url == '/') { _path =  'index.html';}
+    else { _path = req.url;  }
+	fs.readFile(path.normalize(__dirname+'/../client/'+_path),
+	function (err, data) {
+	    if (err) {
+		//res.writeHead(500);
+                res.writeHead(404);
+	        res.end('404 MOFO! '+err);
 
-    case '/':
-	fs.readFile(path.normalize(__dirname+'/../client/index.html'),
-	function (err, data) {
-	    if (err) {
-		res.writeHead(500);
-		return res.end('Error loading index.html');
+		return res.end('Error loading '+req.url);
 	    }
 	    res.writeHead(200);
 	    res.end(data);
 	});
-	break;
-    case '/Three.js':
-	fs.readFile(path.normalize(__dirname+'/../client/Three.js'),
-	function (err, data) {
-	    if (err) {
-		res.writeHead(500);
-		return res.end('Error loading Three.js');
-	    }
-	    res.writeHead(200);
-	    res.end(data);
-	});
-	break;
-    default:
-	res.writeHead(200);
-	res.end('404 MOFO!');
-    }
 }).listen(8000);;
 var io = require('socket.io').listen(app);
 

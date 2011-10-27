@@ -201,10 +201,10 @@ function updatePlayerParticle()
      });
 
     socket.on('players', function (data) {
-        console.log(data);
+        //console.log(data);
         for(var i=0; i<data.length; i++) {
 	        for (var j=0;j<particles.length; j++) {
-		    if(particles[j].id == data[i].id) {
+		    if(data[i] && particles[j].id == data[i].id) {
 		        //playersInfo[j].x = data[i].x;
 		        //playersInfo[j].y = data[i].y;
 						   
@@ -221,25 +221,25 @@ function updatePlayerParticle()
     });
 
 /*
-protoGL.connect();
+protoGL.init(); //connect + set up API hooks
 protoGL.move();
 
-players = {list:[<Player>,..] addPlayer, removePlayer, updatePosition};
-player = {id:X, particle:<Particle>};
+world.players = {"list":[<Player>,..], idMap:{"idX":indexX}, addPlayer, removePlayer, updatePositions};
+player = {"id":X, "particle":<Meshe>};
 me = new Player();
-me.move();
-
+me.move(x, y);
 
 -server/
 	+server.js
 -client/
 	+index.html
 	+lib/
-            +Thee.js..
+	    +jQuery
+            +Thee.js
         +js/
             +Player.js
             +Meshe.js
-
+	    +World.js (?) //var world = World.init();  loop on world.render();
 */
 
 </script>
