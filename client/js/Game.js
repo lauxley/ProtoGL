@@ -38,7 +38,6 @@ function Game() {
 	});
 
 	this.socket.on('players', function (data) {
-	    console.log(data);
 	    if (Object.keys(game.players.particles).length)
 		game.players.updateOtherParticles(data);
 	    else
