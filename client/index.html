@@ -54,22 +54,23 @@ function init() {
 
    document.addEventListener("keydown",keydown,false);
    document.addEventListener("keyup",keyup,false);
-
-   setInterval(update,1000/30);
-
+   scene.init();
+   setInterval(gameUpdate,1000/30);
+   
    // update de l etat du jeu
-   function update() 
+   function gameUpdate() 
    {
        game.players.moveMe(movingUp0, movingDown0, movingLeft0, movingRight0);
        frameCount++;
-       if(!frameCount%5) {
+       if(frameCount%6 == 0) {
            Game.move(players.me.position.x, players.me.position.y);
        }
-       scene.renderer.render( scene, camera );
+       scene.renderer.render( scene.scene, scene.camera );
    }
 }
 
 var scene = new Scene();
+
 var game = new Game();
 game.init();
 

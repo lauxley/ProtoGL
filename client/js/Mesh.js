@@ -7,7 +7,7 @@ function Scene() {
 
     this.init = function()
     {
-		// Camera params :
+	// Camera params :
 	// field of view, aspect ratio for render output, near and far clipping plane.
 	this.camera = new THREE.Camera(80, window.innerWidth / window.innerHeight, 1, 4000 );
 
@@ -20,8 +20,7 @@ function Scene() {
 
 	this.renderer = new THREE.CanvasRenderer();
 	this.renderer.setSize( window.innerWidth, window.innerHeight );
-
-	document.body.appendChild( this.renderer.domElement );
+	$("body").append(this.renderer.domElement);
     }
 
     this.makeParticle = function(playerInfo) 
