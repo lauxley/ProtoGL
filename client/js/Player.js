@@ -1,14 +1,14 @@
 // initialisation des particules des joueurs
-var players = {
-    particles : [],
-    me : null,
+function players() {
+    this.particles = [],
+    this.me = null,
 
-    makeMe : function(data) 
+    this.makeMe = function(data) 
     {
 	this.me = makeParticle(data);
     },
 
-    makePlayerParticles : function(data)
+    this.makePlayerParticles = function(data)
     {
 	for(var i = 0; i < data.length ; i++)
 	{
@@ -17,7 +17,7 @@ var players = {
     },
 
 // déplacement de la particule du joueur
-    moveMe : function (movingUp0, movingDown0, movingLeft0, movingRight0)
+    this.moveMe = function (movingUp0, movingDown0, movingLeft0, movingRight0)
     {
 	if(movingUp0 == true && this.me.position.y < 780)
 		this.me.position.y += 10;
@@ -31,7 +31,7 @@ var players = {
     },
 
 // déplacement des autres particules
-    updateOtherParticles : function (data)
+    this.updateOtherParticles = function (data)
     {
 	for(var i=0; i<data.length; i++) 
 	{
