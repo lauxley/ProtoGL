@@ -38,15 +38,15 @@ io.sockets.on('connection', function (socket) {
     broadcast('new_player', player);
     socket.player = player;
     sockets[id] = socket;
-    //players.push(player);
+    players.push(player);
     socket.emit('players', players);
     id++;
     broadcast('info', 'there is now '+Object.keys(players).length+' players in the field!');
 
     socket.on('disconnect', function() {
-	//broadcast();
 	for(i=0;i<players.length;i++) {
 	    if(players[i] && players[i].id == socket.player.id) {
+		broadcast('player_leave', players[i].id);
 		delete sockets[players[i].id];
 		delete players[i];	
 	    }

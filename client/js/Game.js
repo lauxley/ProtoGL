@@ -32,6 +32,11 @@ function Game() {
 	    game.players.makePlayerParticle(data);
 	});
 
+	this.socket.on('player_leave', function(id) {
+            game.info('player leaving '+id);
+	    game.players.removePlayerParticle(id);
+	});
+
 	this.socket.on('players', function (data) {
 		if (Object.keys(game.players.particles).length)
 			game.players.updateOtherParticles(data);

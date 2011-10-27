@@ -25,8 +25,8 @@ function Scene() {
 
     this.makeParticle = function(playerInfo) 
     {
-	material = new THREE.ParticleCanvasMaterial( { color: 0xffffff, program: this.particleRender } );
-	particle = new THREE.Particle(material);
+	var material = new THREE.ParticleCanvasMaterial( { color: 0xffffff, program: this.particleRender } );
+	var particle = new THREE.Particle(material);
 
 	particle.id = playerInfo['id'];
 	particle.position.x = playerInfo['x'];
@@ -37,6 +37,12 @@ function Scene() {
 	this.scene.addObject(particle);
 	return particle;
     };
+
+    this.removePlayerParticle = function(particle)
+    {
+	this.scene.removeObject(particle);
+    }
+
 
     this.particleRender = function ( context ) 
     {

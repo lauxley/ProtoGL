@@ -19,8 +19,6 @@ overflow: hidden;
 
 <script type="text/javascript">
 
-
-
 function init() {
 
    var frameCount = 0;
@@ -40,6 +38,7 @@ function init() {
     movingRight0 = true;
    if(e.keyCode == 40)
     movingDown0 = true;
+
    }
    var keyup = function(e){
    if(e.keyCode == 37)
@@ -62,7 +61,7 @@ function init() {
    {
        game.players.moveMe(movingUp0, movingDown0, movingLeft0, movingRight0);
        frameCount++;
-       if(frameCount%6 == 0) {
+       if(frameCount%4 == 0) {
            game.move(game.players.me.position.x, game.players.me.position.y);
        }
        scene.renderer.render( scene.scene, scene.camera );

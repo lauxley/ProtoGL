@@ -8,6 +8,11 @@ function players() {
 	this.me = scene.makeParticle(data);
     },
 
+    this.removePlayerParticle = function(id) {
+	scene.removePlayerParticle(this.particles[id]);
+	delete this.particles[id];
+    }
+
     this.makePlayerParticle = function(data) {
 	 if(data)
 		this.particles[data.id] = scene.makeParticle(data);
@@ -34,9 +39,8 @@ function players() {
 	if(movingLeft0 == true && this.me.position.x > -1450 )
 		this.me.position.x -= 10;
 	if(movingRight0 == true && this.me.position.x < 1450)
-		this.me.position.x += 10;
-		
-    },
+		this.me.position.x += 10;	
+    };
 
 // déplacement des autres particules
     this.updateOtherParticles = function (data)
