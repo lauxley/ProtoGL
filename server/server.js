@@ -18,9 +18,8 @@ var app = require('http').createServer(function (req, res) {
 	fs.readFile(path.normalize(__dirname+'/../client/'+_path),
 	function (err, data) {
 	    if (err) {
-		//res.writeHead(500);
                 res.writeHead(404);
-	        res.end('404 ('+_path+')MOFO! '+err);
+	        res.end('404 ('+_path+') MOFO! '+err);
 	    }
 	    res.writeHead(200);
 	    res.end(data);
@@ -31,8 +30,8 @@ var io = require('socket.io').listen(app);
 io.sockets.on('connection', function (socket) {
     console.log('New client ('+socket.id+')!');
     socket.emit('info', 'welcome !');
-    var x = Math.round(Math.random()*3001-1500);
-    var y = Math.round(Math.random()*1561-780);
+    var x = Math.round(Math.random()*400-200);
+    var y = Math.round(Math.random()*400-200);
     var player = {'id':id, 'x':x, 'y':y };
     socket.emit('welcome', player);
     broadcast('new_player', player);
@@ -45,10 +44,10 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('disconnect', function() {
 	for(i=0;i<players.length;i++) {
-	    if(players[i] && players[i].id == socket.player.id) {
+	    if(players[i].id == socket.player.id) {
 		broadcast('player_leave', players[i].id);
 		delete sockets[players[i].id];
-		delete players[i];	
+		players.splice(i);	
 	    }
 	}
     });

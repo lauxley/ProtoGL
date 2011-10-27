@@ -14,26 +14,52 @@ function Scene() {
 	// default position is 0,0,0.
 	this.camera.position.z = 1000;
 
+
 	this.scene = new THREE.Scene();
 
+	/* camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, 1, 4000 );
+	   */
 
 	this.renderer = new THREE.CanvasRenderer();
 	this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+	// create a point light
+	var pointLight = new THREE.AmbientLight( 0xFFFFFF );
+
+	// set its position
+	pointLight.position.x = 10;
+	pointLight.position.y = 50;
+	pointLight.position.z = 130;
+
+	// add to the scene
+	this.scene.addLight(pointLight); 
+
 	$("body").append(this.renderer.domElement);
+    }
+
+
+    this.removePlayerParticle = function(particle)
+    {
+       this.scene.removeObject(particle);
     }
 
     this.makeParticle = function(playerInfo) 
     {
-	material = new THREE.ParticleCanvasMaterial( { color: 0xffffff, program: this.particleRender } );
-	particle = new THREE.Particle(material);
+	var meshes = { "list" : [] };
 
-	particle.id = playerInfo['id'];
-	particle.position.x = playerInfo['x'];
-	particle.position.y = playerInfo['y'];
-	particle.position.z = 50;
-	particle.scale.x = particle.scale.y = 10;
+	var _randColor = function() {
+	    return Math.floor(Math.random()*16777215);
+	}
+	
+	var bodyMaterial = new THREE.MeshLambertMaterial({ color: _randColor() });
 
-	this.scene.addObject(particle);
+	var body = new THREE.Mesh(new THREE.CylinderGeometry(10, 10 ,5, 3), bodyMaterial);
+	//body.rotation.x = 45;
+	body.id = playerInfo['id'];
+	body.position.x = playerInfo['x'];
+	body.position.y = playerInfo['y'];
+	body.position.z = 50;
+	body.scale.x = body.scale.y = 10;
 	
 	var bordGauche = new THREE.Mesh( new THREE.CubeGeometry( 50, 1220, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );
 	var bordDroit =  new THREE.Mesh( new THREE.CubeGeometry( 50, 1220, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );
@@ -54,9 +80,9 @@ function Scene() {
 	THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( bordBas ) );
 	THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( bordDroit ) );
 	
+	this.scene.addObject(body);
+	return body;
 
-	
-	return particle;
     };
 
     this.particleRender = function ( context ) 
