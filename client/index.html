@@ -2,18 +2,198 @@
 <head>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script src="Three.js"></script>
+
+<meta charset="utf-8">
+
+<style type="text/css">
+body {
+background-color: #000000;
+margin: 0px;
+overflow: hidden;
+}
+</style>
+
 <script type="text/javascript">
-    jQuery(function(){
+   jQuery(function(){
+//var myId;
+var playersInfo = [];
+var frameCount = 0;
+// moving vars
+var movingDown0 = false;
+var movingUp0 = false;
+var movingLeft0 = false;
+var movingRight0 = false;
+
+// key listeners
+var keydown = function(e){ 
+  if(e.keyCode == 37)
+	movingLeft0 = true;
+  if(e.keyCode == 38)
+	movingUp0 = true;
+  if(e.keyCode == 39)
+    movingRight0 = true;
+  if(e.keyCode == 40)
+    movingDown0 = true;
+}
+var keyup = function(e){
+  if(e.keyCode == 37)
+	movingLeft0 = false;
+  if(e.keyCode == 38)
+	movingUp0 = false;
+  if(e.keyCode == 39)
+    movingRight0 = false;
+  if(e.keyCode == 40)
+    movingDown0 = false;
+	
+}
+
+document.addEventListener("keydown",keydown,false);
+document.addEventListener("keyup",keyup,false);
+
+// the main three.js components
+var camera, scene, renderer;
+
+// particules
+var particles = [];
+var me = null;
+var ennemyParticles = [];
+
+function init() 
+{
+
+// Camera params :
+// field of view, aspect ratio for render output, near and far clipping plane.
+camera = new THREE.Camera(80, window.innerWidth / window.innerHeight, 1, 4000 );
+
+// move the camera backwards so we can see stuff!
+// default position is 0,0,0.
+camera.position.z = 1000;
+
+scene = new THREE.Scene();
+
+
+renderer = new THREE.CanvasRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+
+document.body.appendChild( renderer.domElement );
+
+makePlayerParticles();
+
+
+// render 30 times a second
+setInterval(update,1000/30);
+}
+
+// update de l etat du jeu
+function update() 
+{
+   frameCount++;
+   updatePlayerParticle();
+   //moveMultiPlayerParticles();
+   if(frameCount%5) {
+       move(me.position.x, me.position.y);
+   }
+   renderer.render( scene, camera );
+}
+
+/*
+function moveMultiPlayerParticles()
+{
+	// récuperation des coordonnées des autres joueurs
+	var jsonStr = ""; // todo request player coord
+	var myObject = eval('(' + jsonStr + ')');
+	for (var i = 0; i < myObject.length; i++)
+	{
+		if(myId != myObject[i]['id'])
+		{
+			particles[i].position.x = myObject[i]['x'];
+			particles[i].position.y = myObject[i]['y'];
+		}
+	}
+}*/
+
+
+function makeParticle(playerInfo) {
+	material = new THREE.ParticleCanvasMaterial( { color: 0xffffff, program: particleRender } );
+	particle = new THREE.Particle(material);
+
+	particle.id = playerInfo['id'];
+	particle.position.x = playerInfo['x'];
+	particle.position.y = playerInfo['y'];
+	particle.position.z = 50;
+	particle.scale.x = particle.scale.y = 10;
+
+	scene.addObject(particle);
+	return particle;
+	//particles.push(particle);
+}
+
+// initialisation des particules des joueurs
+function makePlayerParticles()
+{
+	var particle, material;
+
+	for(var i = 0; i < playersInfo.length ; i++)
+	{
+	    particles.push(makeParticle(playersInfo[i]));
+	}
+}
+
+
+function particleRender( context ) 
+{
+context.beginPath();
+context.arc( 0, 0, 1, 0, Math.PI * 2, true );
+context.fill();
+};
+
+
+// déplacement de la particule du joueur
+function updatePlayerParticle()
+{
+	//particle0 = particles[myId];
+		
+	if(movingUp0 == true && me.position.y < 780)
+		me.position.y += 10;
+	if(movingDown0 == true && me.position.y > -780)
+		me.position.y -= 10;
+	if(movingLeft0 == true && me.position.x > -1450 )
+		me.position.x -= 10;
+	if(movingRight0 == true && me.position.x < 1450)
+		me.position.x += 10;
+		
+}
+
+ 
 
     var info = function(msg) {
-        $('body').after(msg);
+        //$('body').append('<br>'+msg);
+        console.log(msg);
     };
 
-    console.log('test');
     var socket = io.connect('192.168.0.10', {port:8000});
 
+    function move(x, y) {
+        socket.emit('move', '{"x":'+x+', "y":'+y+'}');
+    }
+						   
     socket.on('connect', function (data) {
-        info('<br>connected!');
+        info('connected!');
+    });
+
+    socket.on('welcome', function(data) {
+        info('I am '+data.id+' positions: x='+data.x+' y='+data.y);
+        //myId = data.id;
+        //playersInfo.push(data);
+        init();
+	me = makeParticle(data);
+    });
+
+    socket.on('new_player', function(data) {
+        info('New player '+data.id+' positions: x='+data.x+' y='+data.y);
+        //playersInfo.push(data);
+        particles.push(makeParticle(data));
     });
 
     socket.on('info', function (data) {
@@ -22,14 +202,46 @@
 
     socket.on('players', function (data) {
         console.log(data);
-        //update players positions
-    });
-   
-    var move = function(x, y) {
-        socket.emit({'x':x, 'y':y});
-    }
+        for(var i=0; i<data.length; i++) {
+	        for (var j=0;j<particles.length; j++) {
+		    if(particles[j].id == data[i].id) {
+		        //playersInfo[j].x = data[i].x;
+		        //playersInfo[j].y = data[i].y;
+						   
+			particles[j].position.x = data[i]['x'];
+			particles[j].position.y = data[i]['y'];
 
+			break;
+		    }
+		}
+	}
+        //update players positions
+						 });
+   
     });
+
+/*
+protoGL.connect();
+protoGL.move();
+
+players = {list:[<Player>,..] addPlayer, removePlayer, updatePosition};
+player = {id:X, particle:<Particle>};
+me = new Player();
+me.move();
+
+
+-server/
+	+server.js
+-client/
+	+index.html
+	+lib/
+            +Thee.js..
+        +js/
+            +Player.js
+            +Meshe.js
+
+*/
+
 </script>
 </head>
 <body>
