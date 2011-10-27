@@ -39,9 +39,11 @@ function Game() {
 
 	this.socket.on('players', function (data) {
 	    if (Object.keys(game.players.particles).length)
-		game.players.updateOtherParticles(data);
+			game.players.updateOtherParticles(data);
 	    else
-		game.players.makePlayersParticles(data);
+			game.players.makePlayersParticles(data);
+		game.players.updateShoot();
+		game.players.updateBomb();
 	});
 
 	this.socket.on('this.info', function (data) {

@@ -120,5 +120,38 @@ function Scene() {
 	    return 4;
 	return false;
     };
+	
+	
+	this.shoot = function(particle)
+	{
+		material = new THREE.ParticleCanvasMaterial( { color: 0xff0000, program: this.particleRender } );
+		shoot = new THREE.Particle(material);
+		shoot.position.x = particle.position.x
+		shoot.position.y = particle.position.y
+		shoot.position.z = 50;
+		shoot.rotation.z = particle.rotation.z;
+		shoot.rotation.x = particle.rotation.x;
+		shoot.rotation.y = particle.rotation.y;
+		shoot.scale.x = shoot.scale.y = 3;
+		this.scene.addObject(shoot);
+		return shoot;
+	}
+	
+	this.bomb = function(particle)
+	{
+		material = new THREE.ParticleCanvasMaterial( { color: 0x00ff00, program: this.particleRender } );
+		bomb = new THREE.Particle(material);
+		bomb.position.x = particle.position.x
+		bomb.position.y = particle.position.y
+		bomb.position.z = 50;
+		bomb.scale.x = bomb.scale.y = 3;
+		this.scene.addObject(bomb);
+		return bomb;
+	}
+	
+	this.explodeBomb = function(bomb)
+	{
+		this.scene.removeObject(bomb);
+	}
 
 }
