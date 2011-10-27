@@ -18,7 +18,8 @@ overflow: hidden;
 </style>
 
 <script type="text/javascript">
-   jQuery(function(){
+
+
 
 function init() {
 
@@ -59,18 +60,17 @@ function init() {
    // update de l etat du jeu
    function update() 
    {
-       players.moveMe(movingUp0, movingDown0, movingLeft0, movingRight0);
+       game.players.moveMe(movingUp0, movingDown0, movingLeft0, movingRight0);
        frameCount++;
        if(!frameCount%5) {
            Game.move(players.me.position.x, players.me.position.y);
        }
-       renderer.render( scene, camera );
+       scene.renderer.render( scene, camera );
    }
 }
 
-});
-
-game = new Game();
+var scene = new Scene();
+var game = new Game();
 game.init();
 
 /*

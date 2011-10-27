@@ -5,14 +5,18 @@ function players() {
 
     this.makeMe = function(data) 
     {
-	this.me = makeParticle(data);
+	this.me = scene.makeParticle(data);
     },
 
-    this.makePlayerParticles = function(data)
+    this.makePlayerParticle = function(data) {
+	return scene.makeParticle(data);
+    }
+
+    this.makePlayersParticles = function(data)
     {
 	for(var i = 0; i < data.length ; i++)
 	{
-	    this.particles[data[i].id] = makeParticle(data[i]);
+	    this.makePlayerParticle(data[i]);
 	}
     },
 
