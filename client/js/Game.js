@@ -38,10 +38,11 @@ function Game() {
 	});
 
 	this.socket.on('players', function (data) {
-		if (Object.keys(game.players.particles).length)
-			game.players.updateOtherParticles(data);
-		else
-			game.players.makePlayersParticles(data);
+	    console.log(data);
+	    if (Object.keys(game.players.particles).length)
+		game.players.updateOtherParticles(data);
+	    else
+		game.players.makePlayersParticles(data);
 	});
 
 	this.socket.on('this.info', function (data) {

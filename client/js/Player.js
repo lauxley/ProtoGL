@@ -53,9 +53,10 @@ function players() {
 	{
 		if(data[i].id != this.me.id)
 		{
+		    this.particles[data[i].id].rotation.y = data[i]['r'];
 		    this.particles[data[i].id].position.x = data[i]['x'];
 		    this.particles[data[i].id].position.y = data[i]['y'];
-		    this.particles[data[i].id].rotation.y = data[i]['r'];
+		    this.particles[data[i].id].updateMatrix();
 		}
 	}
     };
