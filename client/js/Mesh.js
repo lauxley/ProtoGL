@@ -24,7 +24,7 @@ function Scene() {
 	this.renderer.setSize( window.innerWidth, window.innerHeight );
 
 	// create a point light
-	var pointLight = new THREE.AmbientLight( 0xFFFFFF );
+	/*var pointLight = new THREE.AmbientLight( 0xFFFFFF );
 
 	// set its position
 	pointLight.position.x = 10;
@@ -32,7 +32,7 @@ function Scene() {
 	pointLight.position.z = 130;
 
 	// add to the scene
-	this.scene.addLight(pointLight); 
+	this.scene.addLight(pointLight); */
 
 	$("body").append(this.renderer.domElement);
     }
@@ -54,11 +54,14 @@ function Scene() {
 	var bodyMaterial = new THREE.MeshLambertMaterial({ color: _randColor() });
 
 	var body = new THREE.Mesh(new THREE.CylinderGeometry(10, 10 ,5, 3), bodyMaterial);
-	//body.rotation.x = 45;
 	body.id = playerInfo['id'];
 	body.position.x = playerInfo['x'];
 	body.position.y = playerInfo['y'];
 	body.position.z = 50;
+
+
+
+
 	body.scale.x = body.scale.y = 10;
 	
 	var bordGauche = new THREE.Mesh( new THREE.CubeGeometry( 50, 1220, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );

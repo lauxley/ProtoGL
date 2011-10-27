@@ -13,6 +13,11 @@ function players() {
 		this.particles[data.id] = scene.makeParticle(data);
     };
 
+    this.removePlayerParticle = function(id) {
+	scene.removePlayerParticle(this.particles[id]);
+	delete this.particles[id];
+    };
+
     this.makePlayersParticles = function(data)
     {
 	for(var i = 0; i < data.length ; i++)
@@ -37,6 +42,9 @@ function players() {
 	    this.me.rotation.z += 0.1;
 	if(movingRight0 == true && collision != 2)
 	    this.me.rotation.z -= 0.1;
+
+	this.me.updateMatrix();
+
     };
 
 // déplacement des autres particules
