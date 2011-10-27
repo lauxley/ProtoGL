@@ -32,7 +32,8 @@ io.sockets.on('connection', function (socket) {
     socket.emit('info', 'welcome !');
     var x = Math.round(Math.random()*400-200);
     var y = Math.round(Math.random()*400-200);
-    var player = {'id':id, 'x':x, 'y':y };
+    var r = Math.round(Math.random()*360); //angle
+    var player = {"id":id, "x":x, "y":y, "r":r};
     socket.emit('welcome', player);
     broadcast('new_player', player);
     socket.player = player;

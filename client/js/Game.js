@@ -9,8 +9,8 @@ function Game() {
         console.log(msg);
     };
 
-    this.move = function(x, y) {
-        this.socket.emit('move', '{"x":'+x+', "y":'+y+'}');
+    this.move = function(x, y, r) {
+        this.socket.emit('move', '{"x":'+x+', "y":'+y+', "r":'+r+'}');
     };
 
     this.init = function() {

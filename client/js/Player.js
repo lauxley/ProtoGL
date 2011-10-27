@@ -35,16 +35,15 @@ function players() {
 	var collision = scene.detectCollision(this.me);
 	
 	if(movingUp0 == true && collision != 3)
-	    this.me.translateY(10);
+	    this.me.translateZ(-10);
 	if(movingDown0 == true && collision != 4)
-	    this.me.translateY(-10);
+	    this.me.translateZ(10);
 	if(movingLeft0 == true && collision != 1)
-	    this.me.rotation.z += 0.1;
+	    this.me.rotation.y += 0.1;
 	if(movingRight0 == true && collision != 2)
-	    this.me.rotation.z -= 0.1;
+	    this.me.rotation.y -= 0.1;
 
 	this.me.updateMatrix();
-
     };
 
 // déplacement des autres particules
@@ -52,10 +51,11 @@ function players() {
     {
 	for(var i=0; i<data.length; i++) 
 	{
-		if(data[i] && data[i].id != this.me.id)
+		if(data[i].id != this.me.id)
 		{
-			this.particles[data[i].id].position.x = data[i]['x'];
-			this.particles[data[i].id].position.y = data[i]['y'];
+		    this.particles[data[i].id].position.x = data[i]['x'];
+		    this.particles[data[i].id].position.y = data[i]['y'];
+		    this.particles[data[i].id].rotation.y = data[i]['r'];
 		}
 	}
     };
