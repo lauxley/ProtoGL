@@ -2,6 +2,8 @@
 function players() {
     this.particles = [],
     this.me = null,
+	this.shoots = [],
+	this.bombs = []
 
     this.makeMe = function(data) 
     {
@@ -30,7 +32,7 @@ function players() {
     };
 
 // déplacement de la particule du joueur
-    this.moveMe = function (movingUp0, movingDown0, movingLeft0, movingRight0)
+    this.moveMe = function (movingUp0, movingDown0, movingLeft0, movingRight0, shooting, bombing)
     {
 	var collision = scene.detectCollision(this.me);
 	
@@ -42,6 +44,10 @@ function players() {
 	    this.me.rotation.y += 0.1;
 	if(movingRight0 == true && collision != 2)
 	    this.me.rotation.y -= 0.1;
+	if(shooting == true)
+		this.shoots.push(scene.shoot(this.me));
+	if(bombing == true)
+		this.bombs.push(scene.bomb(this.me));
 
 	this.me.updateMatrix();
     };
@@ -60,5 +66,28 @@ function players() {
 		}
 	}
     };
+	
+	// gestion des projectiles
+	this.updateShoot = function()
+	{
+		for(var i=0; i<this.shoots.length; i++)
+		{
+			this.shoots[i].translateX(5);
+		}
+	}
+	
+	// gestion des bombes
+	this.updateBomb = function()
+	{
+		for(var i=0; i<this.bombs.length; i++)
+		{
+			this.bombs[i].scale.x++;
+			this.bombs[i].scale.y++;
+			if(this.bombs[i].scale.x == 150)
+			{
+				scene.explodeBomb(this.bombs[i]);
+			}
+		}
+	}
 
 };
