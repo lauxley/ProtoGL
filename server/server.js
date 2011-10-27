@@ -20,9 +20,7 @@ var app = require('http').createServer(function (req, res) {
 	    if (err) {
 		//res.writeHead(500);
                 res.writeHead(404);
-	        res.end('404 MOFO! '+err);
-
-		return res.end('Error loading '+req.url);
+	        res.end('404 ('+_path+')MOFO! '+err);
 	    }
 	    res.writeHead(200);
 	    res.end(data);
@@ -40,7 +38,7 @@ io.sockets.on('connection', function (socket) {
     broadcast('new_player', player);
     socket.player = player;
     sockets[id] = socket;
-    players.push(player);
+    //players.push(player);
     socket.emit('players', players);
     id++;
     broadcast('info', 'there is now '+Object.keys(players).length+' players in the field!');
