@@ -41,7 +41,7 @@ io.sockets.on('connection', function (socket) {
     players.push(player);
     socket.emit('players', players);
     id++;
-    broadcast('info', 'there is now '+Object.keys(players).length+' players in the field!');
+    //broadcast('info', 'there is now '+Object.keys(players).length+' players in the field!');
 
     socket.on('disconnect', function() {
 	for(i=0;i<players.length;i++) {
@@ -57,6 +57,7 @@ io.sockets.on('connection', function (socket) {
 	var d = JSON.parse(data);
 	socket.player.x = d.x;
 	socket.player.y = d.y;
+	socket.player.r = d.r;
 	broadcast('players', players);
     })
 });
