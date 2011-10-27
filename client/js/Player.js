@@ -27,13 +27,15 @@ function players() {
 // déplacement de la particule du joueur
     this.moveMe = function (movingUp0, movingDown0, movingLeft0, movingRight0)
     {
-	if(movingUp0 == true && this.me.position.y < 780)
+	var collision = scene.detectCollision(this.me);
+	
+	if(movingUp0 == true && collision != 3)
 		this.me.position.y += 10;
-	if(movingDown0 == true && this.me.position.y > -780)
+	if(movingDown0 == true && collision != 4)
 		this.me.position.y -= 10;
-	if(movingLeft0 == true && this.me.position.x > -1450 )
+	if(movingLeft0 == true && collision != 1)
 		this.me.position.x -= 10;
-	if(movingRight0 == true && this.me.position.x < 1450)
+	if(movingRight0 == true && collision != 2)
 		this.me.position.x += 10;
 		
     },
