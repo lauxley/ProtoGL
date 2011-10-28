@@ -14,7 +14,7 @@ var Game = function()
     this.playerMap = {}; //map of player.id -> index in this.players 
     this.me = null; //the user
 
-    this.currentTime = Date.UTC();
+    this.currentTime = Date.now();
 
     this.initialized = false;
 
@@ -28,10 +28,13 @@ var Game = function()
     };
 
     this.move = function() {
+<<<<<<< HEAD
 	
+=======
+>>>>>>> 593ac4e89189f68cd4095b349ed130edb1757812
 
 	//TODO: is it ok to round ?
-        this.api.move(Math.round(this.me.position.x), Math.round(this.me.position.y), Math.round(this.me.position.r*1000)/1000);
+        this.api.move(this.me.position.x, this.me.position.y, this.me.position.r);
     };
 
     this._getPlayerById = function(id) {
@@ -54,20 +57,40 @@ var Game = function()
     this.addPlayer = function(data) {
 	this.info('New player '+data.id+' Spawn point: x='+data.x+' y='+data.y);
 	this.playerMap[data.id] = this.players.push(new Player(data))-1;
-	
+    };
+
+    this.shoot = function (shoot) {
+	this.api.shoot(shoot);
+    }
+
+    this.addShoot = function(data) {
+	//TODO: the current implementation place the bomb at the current 'client' player position;
+	//it should use the server's datas
+	this.players[this.playerMap[data.id]].addShoot();
+    };
+
+    this.bomb = function(bomb) {
+	this.api.bomb(bomb);
+    }
+
+    this.addBomb = function(data) {
+	//TODO: the current implementation place the bomb at the current 'client' player position;
+	//it should use the server's datas
+	this.players[data.id].addBomb();
     };
 
     this.removePlayer = function(id) {
 	this.info('player leaving '+id);
 	//TODO: what about existing shoots, bombs, etc ?
 	//update the id->index map
-	for(i=this.playerMap[id]+1;i<this.players.length;i++) this.playerMap[this.player[i]] -= 1; //lol?
+	for(i=this.playerMap[id]+1;i<this.players.length;i++) this.playerMap[this.players[i]] -= 1; //lol?
 	this._getPlayerById(id).destroy(); //clean destructor
 	this.players.splice(this.playerMap[id]);
 	delete this.playerMap[id];
     };
 
     this.updatePlayers = function(data) {
+	console.log(data);
 	for(var i = 0; i < data.length ; i++)
 	{
 	    if(data[i].id != this.me.id)
@@ -94,17 +117,16 @@ var Game = function()
 	}
     };
 
-    this.render = function() 
-	{
-		this.animate();
-		this.controls.move();
-		if(this.currentTime + MOVE_UPDATE_TIMER  > Date.UTC()) 
-		{
-			this.move();
-			this.currentTime = Date.UTC();
-		}
-		//TODO: send positions every X ms
-		this.scene.renderer.render( this.scene, this.scene.camera );
-		requestAnimationFrame( function() { game.render(); } );
+
+    this.render = function() {
+	this.animate();
+	this.controls.move();
+	//TODO : IT MIGHT NOT BE A VERY GOOD IDEA TO SEND DATA IN THE MAIN LOOP (?)
+	if(this.currentTime + MOVE_UPDATE_TIMER  > Date.now()) {
+	    this.move();
+	    this.currentTime = Date.now();
+	}
+	this.scene.renderer.render( this.scene, this.scene.camera );
+	requestAnimationFrame( function() { game.render(); } );
     };
 };

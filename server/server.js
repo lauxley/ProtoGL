@@ -3,11 +3,15 @@ var path = require('path');
 
 var id = 1;
 var players = [];
+var shoots = [];
+var bombs = [];
 var sockets = {};
 
-var broadcast = function(type, msg) {
+var broadcast = function(type, msg, excludeID) {
     for(var sId in sockets) {
-	sockets[sId].emit(type, msg);
+	if (sId != excludeID) {
+	    sockets[sId].emit(type, msg);
+	}
     }
 };
 
@@ -28,6 +32,13 @@ var app = require('http').createServer(function (req, res) {
 var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function (socket) {
+    function _getPlayersInfo() {
+	l = [];
+	keys = Object.keys(sockets);
+	for (i=0;i<keys.length;i++) { l.push(sockets[keys[i]].player); }
+	return l
+    }
+
     console.log('New client ('+socket.id+')!');
     socket.emit('info', 'welcome !');
     var x = Math.round(Math.random()*400-200);
@@ -35,22 +46,18 @@ io.sockets.on('connection', function (socket) {
     var r = Math.round(Math.random()*360); //angle
     var player = {"id":id, "x":x, "y":y, "r":r};
     socket.emit('welcome', player);
-    broadcast('new_player', player);
+    //players.push(player);
+    socket.emit('players', _getPlayersInfo());
+    broadcast('new_player', player, id);
     socket.player = player;
     sockets[id] = socket;
-    players.push(player);
-    socket.emit('players', players);
+
     id++;
     //broadcast('info', 'there is now '+Object.keys(players).length+' players in the field!');
 
     socket.on('disconnect', function() {
-	for(i=0;i<players.length;i++) {
-	    if(players[i].id == socket.player.id) {
-		broadcast('player_leave', players[i].id);
-		delete sockets[players[i].id];
-		players.splice(i);	
-	    }
-	}
+	broadcast('player_leave', socket.player.id, socket.player.id);
+	delete sockets[socket.player.id];
     });
 
     socket.on('move', function(data) {
@@ -58,8 +65,23 @@ io.sockets.on('connection', function (socket) {
 	socket.player.x = d.x;
 	socket.player.y = d.y;
 	socket.player.r = d.r;
-	broadcast('players', players);
-    })
+	broadcast('players', _getPlayersInfo());
+    });
+
+    socket.on('shoot', function(data) {
+	var d = JSON.parse(data);
+	//r is the angle, s the strength
+	var shoot = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "s":d.s}; 
+	shoots.push(shoot);
+	broadcast('shoot', shoot, socket.player.id);
+    });
+
+    socket.on('bomb', function(data) {
+	var d = JSON.parse(data);
+	var bomb = {"x":d.x, "y":d.y, "r":d.r, "s":d.s};
+	bombs.push(bombs);
+	broadcast('bomb', bomb, socket.player.id);
+    });
 });
 
 console.log('Server running at http://localhost:8000/');

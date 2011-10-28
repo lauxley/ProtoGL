@@ -18,9 +18,10 @@ var Player = function(data)
 
     this.model = new PlayerModel(this);
 
-    this.destroy = function() 
-	{
-		this.mesh.destroy();
+
+    this.destroy = function() {
+	this.model.destroy();
+
     };
 
     this.updateFromControl = function() 
@@ -53,9 +54,12 @@ var Player = function(data)
 				$("#shootCooldown > div").css({ 'background': '#ff0' });
 			if(shootJauge < 25)
 				$("#shootCooldown > div").css({ 'background': '#f00' });
-			this.shoots.push(new ShootModel(this));
+			var shoot = new ShootModel(this);
+			this.shoots.push(shoot);
+			game.shoot(shoot);
 			this.lastShotTime = Date.now();
 		}
+
     }
 	
     // gestion des projectiles
@@ -96,7 +100,9 @@ var Player = function(data)
 		// bomb only if cooldown ok
 		if(this.lastBombTime + this.bombCooldown  < Date.now() ) 
 		{
-			this.bombs.push(new BombModel(this));
+			var bomb = new BombModel(this);
+			this.bombs.push(bomb);
+			game.bomb(bomb);
 			this.lastBombTime = Date.now();
 			$("#bombCooldown").progressbar({ value: 5 });
 			$("#bombCooldown > div").css({ 'background': '#f00' });

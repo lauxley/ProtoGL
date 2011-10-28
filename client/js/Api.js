@@ -33,11 +33,27 @@ var Api = function(game) {
 	}
     });
 
+    this.socket.on('shoot', function (data) {
+	game.addShoot(data);
+    });
+
+    this.socket.on('bomb', function(data) {
+	game.addBomb(data);
+    });
+
     this.socket.on('this.info', function (data) {
         game.info(data);
     });
 
     this.move = function(x, y, r) {
-	this.socket.emit('move', '{"x":'+x+', "y":'+y+', "r":'+r+'}');
+	this.socket.emit('move', '{"x":'+Math.round(x)+',"y":'+Math.round(y)+',"r":'+Math.round(r*1000)/1000+'}');
+    }
+
+    this.shoot = function(shoot) {
+	this.socket.emit('shoot', '{"x":'+Math.round(shoot.mesh.position.x)+',"y":'+Math.round(shoot.mesh.position.y)+',"r":'+Math.round(shoot.mesh.rotation.y*1000)/1000+'}');
+    }
+
+    this.bomb = function(bomb) {
+	this.socket.emit('bomb', '{"x":'+Math.round(bomb.mesh.position.x)+',"y":'+Math.round(bomb.mesh.position.y)+'}');
     }
 }
