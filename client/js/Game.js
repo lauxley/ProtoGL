@@ -28,10 +28,6 @@ var Game = function()
     };
 
     this.move = function() {
-<<<<<<< HEAD
-	
-=======
->>>>>>> 593ac4e89189f68cd4095b349ed130edb1757812
 
 	//TODO: is it ok to round ?
         this.api.move(this.me.position.x, this.me.position.y, this.me.position.r);
@@ -90,7 +86,6 @@ var Game = function()
     };
 
     this.updatePlayers = function(data) {
-	console.log(data);
 	for(var i = 0; i < data.length ; i++)
 	{
 	    if(data[i].id != this.me.id)
