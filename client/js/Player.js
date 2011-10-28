@@ -12,7 +12,7 @@ var Player = function(data) {
     this.model = new PlayerModel(this);
 
     this.destroy = function() {
-	this.mesh.destroy();
+	this.model.destroy();
     };
 
     this.updateFromControl = function() {
@@ -32,7 +32,9 @@ var Player = function(data) {
 
     this.addShoot = function() {
 	//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
-	this.shoots.push(new ShootModel(this));
+	var shoot = new ShootModel(this)
+	this.shoots.push(shoot);
+	game.shoot(shoot);
     }
 	
     // gestion des projectiles
@@ -46,7 +48,9 @@ var Player = function(data) {
 
     this.addBomb = function() {
 	//we may need a 'Bomb' class at some point, but not for now
-	this.bombs.push(new BombModel(this));
+	var bomb = new BombModel(this);
+	this.bombs.push(bomb);
+	game.bomb(bomb);
     }
 
     // gestion des bombes
