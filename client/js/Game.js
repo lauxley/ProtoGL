@@ -3,6 +3,8 @@ var Game = function() {
       is a singleton
       it is the main class of the game, that implement every other, the api, the webGL scene, the controls
     */
+    var MOVE_UPDATE_TIMER = 200; //in ms
+
     this.scene = null; //manage the webGL scene and its (static) content (the world)
     this.api = null; //manage the protocol and the comunication with the game server
     this.controls = null; //manage the camera and controls (keybindings)
@@ -10,6 +12,8 @@ var Game = function() {
     this.players = []; //list of instances of Player (not including the user)
     this.playerMap = {}; //map of player.id -> index in this.players 
     this.me = null; //the user
+
+    this.currentTime = Date.UTC();
 
     this.initialized = false;
 
@@ -22,8 +26,13 @@ var Game = function() {
         console.log(msg);
     };
 
-    this.move = function(x, y, r) {
-        this.api.move(x, y, r);
+    this.move = function() {
+	function roundNumber(num, dec) {
+	    return Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+	}
+
+	//TODO: is it ok to round ?
+        this.api.move(Math.round(this.me.position.x), Math.round(this.me.position.y), Math.round(this.me.position.r*1000)/1000);
     };
 
     this._getPlayerById = function(id) {
@@ -82,6 +91,10 @@ var Game = function() {
     this.render = function() {
 	this.animate();
 	this.controls.move();
+	if(this.currentTime + MOVE_UPDATE_TIMER  > Date.UTC()) {
+	    this.move();
+	    this.currentTime = Date.UTC();
+	}
 	//TODO: send positions every X ms
 	this.scene.renderer.render( this.scene, this.scene.camera );
 	requestAnimationFrame( function() { game.render(); } );
