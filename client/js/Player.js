@@ -9,7 +9,9 @@ var Player = function(data)
 	this.lastBombTime = 0;
 	this.shotCooldown = 100;
 	this.shotReplenish = 250;
+	this.bombReplenish = 250;
 	this.bombCooldown = 100;
+	this.shootJauge = 100;
     this.id = data.id;
     this.position = {"x":data.x, "y":data.y, "r":data.r};
     this.shoots = [];
@@ -43,30 +45,17 @@ var Player = function(data)
     this.addShoot = function() 
 	{
 		//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
-		// shoot only every X msec
-		var shootJauge = $("#shootCooldown").progressbar( "option", "value" );
-		if(this.lastShotTime + this.shotCooldown  < Date.now() && shootJauge > 0) 
-		{
-			var shootJauge = $("#shootCooldown").progressbar( "option", "value" );
-			shootJauge = shootJauge - 10;
-			$("#shootCooldown").progressbar({ value: shootJauge });
-			if(shootJauge > 50 && shootJauge < 75)
-				$("#shootCooldown > div").css({ 'background': '#ff0' });
-			if(shootJauge < 25)
-				$("#shootCooldown > div").css({ 'background': '#f00' });
-			var shoot = new ShootModel(this);
-			this.shoots.push(shoot);
-			game.shoot(shoot);
-			this.lastShotTime = Date.now();
-		}
-
+		var shoot = new ShootModel(this);
+		this.shoots.push(shoot);
+		this.lastShotTime = Date.now();
+		return shoot;
     }
 	
     // gestion des projectiles
     this.updateShoots = function()
     {
 		// replenish shoot gauge
-		var shootJauge = $("#shootCooldown").progressbar( "option", "value" );
+		shootJauge = $("#shootCooldown").progressbar( "option", "value" );
 		if(shootJauge < 100 && this.lastShotTime + this.shotReplenish < Date.now())
 		{
 			this.lastShotTime = Date.now();
@@ -98,22 +87,17 @@ var Player = function(data)
 	{
 		//we may need a 'Bomb' class at some point, but not for now
 		// bomb only if cooldown ok
-		if(this.lastBombTime + this.bombCooldown  < Date.now() ) 
-		{
-			var bomb = new BombModel(this);
-			this.bombs.push(bomb);
-			game.bomb(bomb);
-			this.lastBombTime = Date.now();
-			$("#bombCooldown").progressbar({ value: 5 });
-			$("#bombCooldown > div").css({ 'background': '#f00' });
-		}
+		var bomb = new BombModel(this);
+		this.bombs.push(bomb);
+		this.lastBombTime = Date.now();
+		return bomb
     }
 
     // gestion des bombes
     this.updateBombs = function()
     {
 		var bombCooldown = $( "#bombCooldown" ).progressbar( "option", "value" );
-		if(bombCooldown < 100 && this.lastBombTime + this.bombCooldown  < Date.now())
+		if(bombCooldown < 100 && this.lastBombTime + this.bombReplenish  < Date.now())
 		{
 			this.lastBombTime = Date.now();
 			bombCooldown++;

@@ -60,9 +60,35 @@ var Controls = function(player) { //, domElement
 	if(this.movingRight == true)// && collision != 2)
 	    this.player.model.mesh.rotation.y += 0.1;
 	if(this.shooting == true)
-	    this.player.addShoot();
+	{
+	    shootJauge = $("#shootCooldown").progressbar( "option", "value" );
+		if(this.player.lastShotTime + this.player.shotCooldown  < Date.now() && shootJauge > 3) 
+		{		
+			shootJauge = shootJauge - 3;
+			$("#shootCooldown").progressbar({ value: shootJauge });
+			if(shootJauge > 50 && shootJauge < 75)
+				$("#shootCooldown > div").css({ 'background': '#ff0' });
+			if(shootJauge < 25)
+				$("#shootCooldown > div").css({ 'background': '#f00' });
+			var shoot = this.player.addShoot();
+			game.shoot(shoot);
+		}
+	}
 	if(this.bombing == true)
-	    this.player.addBomb();
+	{
+		bombJauge = $("#bombCooldown").progressbar( "option", "value" );
+		if(this.player.lastBombTime + this.player.bombCooldown  < Date.now() && bombJauge > 33) 
+		{		
+			bombJauge = bombJauge - 33;
+			$("#bombCooldown").progressbar({ value: bombJauge });
+			if(bombJauge > 50 && bombJauge < 75)
+				$("#bombCooldown > div").css({ 'background': '#ff0' });
+			if(bombJauge < 25)
+				$("#bombCooldown > div").css({ 'background': '#f00' });
+			var bomb = this.player.addBomb();
+			game.bomb(bomb);
+		}
+	}
 
 	this.player.model.mesh.updateMatrix();	
 	this.player.updateFromControl();
