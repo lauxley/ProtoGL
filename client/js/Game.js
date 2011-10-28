@@ -1,53 +1,89 @@
-var HOST = '192.168.0.10';
-var PORT = 8000;
+var Game = function() {
+    /*
+      is a singleton
+      it is the main class of the game, that implement every other, the api, the webGL scene, the controls
+    */
+    this.scene = null; //manage the webGL scene and its (static) content (the world)
+    this.api = null; //manage the protocol and the comunication with the game server
+    this.controls = null; //manage the camera and controls (keybindings)
 
-function Game() {
+    this.players = []; //list of instances of Player (not including the user)
+    this.playerMap = {}; //map of player.id -> index in this.players 
+    this.me = null; //the user
 
-    this.players = new players();
+    this.initialized = false;
+
+    this.init = function() {
+	this.api = new Api(this); //call this.initScene when the player is connected
+    };
 
     this.info = function(msg) {
+	//TODO : a widget to print the system msgs (and a chat ?)
         console.log(msg);
     };
 
     this.move = function(x, y, r) {
-        this.socket.emit('move', '{"x":'+x+', "y":'+y+', "r":'+r+'}');
+        this.api.move(x, y, r);
     };
 
-    this.init = function() {
-	this.socket = io.connect(HOST, {port:PORT});
-	var game = this;
+    this._getPlayerById = function(id) {
+	return this.players[this.playerMap[id]];
+    };
 
-	this.socket.on('connect', function (data) {
-            game.info('connected!');
-	});
+    this.initScene = function(data) {
+	this.info('I am '+data.id+' Spawn point: x='+data.x+' y='+data.y);
+	this.scene = initScene();
+	this.me = new Player(data);
+	//bind the controls to the created Player
+	this.controls = new Controls(this.me); //, this.scene.renderer.domElement);
 
-	this.socket.on('welcome', function(data) {
-            game.info('I am '+data.id+' Spawn point: x='+data.x+' y='+data.y);
-            init();
-	    game.players.makeMe(data);
-	});
+	this.initialized = true;
+	$(document).trigger("initialized");
 
-	this.socket.on('new_player', function(data) {
-            game.info('New player '+data.id+' Spawn point: x='+data.x+' y='+data.y);
-	    game.players.makePlayerParticle(data);
-	});
+	this.render();
+    };
 
-	this.socket.on('player_leave', function(id) {
-            game.info('player leaving '+id);
-            game.players.removePlayerParticle(id);
-	});
+    this.addPlayer = function(data) {
+	this.info('New player '+data.id+' Spawn point: x='+data.x+' y='+data.y);
+	this.playerMap[data.id] = this.players.push(new Player(data));
+    };
 
-	this.socket.on('players', function (data) {
-	    if (Object.keys(game.players.particles).length)
-			game.players.updateOtherParticles(data);
-	    else
-			game.players.makePlayersParticles(data);
-		game.players.updateShoot();
-		game.players.updateBomb();
-	});
+    this.removePlayer = function(id) {
+	this.info('player leaving '+id);
+	//TODO: what about existing shoots, bombs, etc ?
+	_getPlayerById(id).destroy(); //clean destructor
+	this.players.splice(this.playerMap[id]);
+	delete this.playerMap[id];
+    };
 
-	this.socket.on('this.info', function (data) {
-            game.info(data);
-	});
+    this.updatePlayers = function(data) {
+	for(var i = 0; i < data.length ; i++)
+	{
+	    if(data[i].id != this.me.id)
+	    {
+		if(this.playerMap[id] == undefined) this.addPlayer(data[i]);
+		else this.players[playerMap[id]].updatePosition(data[i]);
+	    }
+	}
+    };
+
+    this.animate = function() {
+	//TODO: update animated objects (for now bombs and bullets)
+	this.me.updateShoots();
+	this.me.updateBombs();
+
+	for (i=0; i<this.players.length; i++) {
+	    var player = this.players[i]; 
+	    player.updateShoots();
+	    player.updateBombs();
+	}
+    };
+
+    this.render = function() {
+	this.animate();
+	this.controls.move();
+	//TODO: send positions every X ms
+	this.scene.renderer.render( this.scene, this.scene.camera );
+	requestAnimationFrame( function() { game.render(); } );
     };
 };

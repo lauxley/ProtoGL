@@ -1,93 +1,60 @@
 // initialisation des particules des joueurs
-function players() {
-    this.particles = [],
-    this.me = null,
-	this.shoots = [],
-	this.bombs = []
+var Player = function(data) {
+    var _randColor = function() {
+	return Math.floor(Math.random()*16777215);
+    }
+    this.id = data.id;
+    this.position = {"x":data.x, "y":data.y, "r":data.r};
+    this.shoots = [];
+    this.bombs = [];
+    this.color = _randColor();
 
-    this.makeMe = function(data) 
-    {
-	this.me = scene.makeParticle(data);
+    this.model = new PlayerModel(this);
+
+    this.destroy = function() {
+	this.mesh.destroy();
     };
 
-    this.makePlayerParticle = function(data) {
-	 if(data)
-		this.particles[data.id] = scene.makeParticle(data);
-    };
+    this.updateFromControl = function() {
+	this.position.x = this.model.mesh.position.x;
+	this.position.y = this.model.mesh.position.y;
+	this.position.r = this.model.mesh.rotation.y;
+    }
 
-    this.removePlayerParticle = function(id) {
-	scene.removePlayerParticle(this.particles[id]);
-	delete this.particles[id];
-    };
-
-    this.makePlayersParticles = function(data)
-    {
-	for(var i = 0; i < data.length ; i++)
-	{
-	    if(data[i] && data[i].id != this.me.id)
-	    {
-		this.makePlayerParticle(data[i]);
-	    }
-	}
-    };
-
-// déplacement de la particule du joueur
-    this.moveMe = function (movingUp0, movingDown0, movingLeft0, movingRight0, shooting, bombing)
-    {
-	var collision = scene.detectCollision(this.me);
+    this.updateFromServer = function(data) {
 	
-	if(movingUp0 == true && collision != 3)
-	    this.me.translateZ(-10);
-	if(movingDown0 == true && collision != 4)
-	    this.me.translateZ(10);
-	if(movingLeft0 == true && collision != 1)
-	    this.me.rotation.y += 0.1;
-	if(movingRight0 == true && collision != 2)
-	    this.me.rotation.y -= 0.1;
-	if(shooting == true)
-		this.shoots.push(scene.shoot(this.me));
-	if(bombing == true)
-		this.bombs.push(scene.bomb(this.me));
+	this.position.x = data[i]['x'];
+	this.position.y = data[i]['y'];
+	this.position.r = data[i]['r'];
 
-	this.me.updateMatrix();
+	this.model.updatePositions(data);
     };
 
-// déplacement des autres particules
-    this.updateOtherParticles = function (data)
+    this.addShoot = function() {
+	//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
+	this.shoots.push(new ShootModel(this));
+    }
+	
+    // gestion des projectiles
+    this.updateShoots = function()
     {
-	for(var i=0; i<data.length; i++) 
+	for(var i=0; i<this.shoots.length; i++)
 	{
-		if(data[i].id != this.me.id)
-		{
-		    this.particles[data[i].id].rotation.y = data[i]['r'];
-		    this.particles[data[i].id].position.x = data[i]['x'];
-		    this.particles[data[i].id].position.y = data[i]['y'];
-		    this.particles[data[i].id].updateMatrix();
-		}
+	    this.shoots[i].mesh.translateZ(-25);
 	}
-    };
-	
-	// gestion des projectiles
-	this.updateShoot = function()
-	{
-		for(var i=0; i<this.shoots.length; i++)
-		{
-			this.shoots[i].translateX(5);
-		}
-	}
-	
-	// gestion des bombes
-	this.updateBomb = function()
-	{
-		for(var i=0; i<this.bombs.length; i++)
-		{
-			this.bombs[i].scale.x++;
-			this.bombs[i].scale.y++;
-			if(this.bombs[i].scale.x == 150)
-			{
-				scene.explodeBomb(this.bombs[i]);
-			}
-		}
-	}
+    }
 
+    this.addBomb = function() {
+	//we may need a 'Bomb' class at some point, but not for now
+	this.bombs.push(new BombModel(this));
+    }
+
+    // gestion des bombes
+    this.updateBombs = function()
+    {
+	for(var i=0; i<this.bombs.length; i++)
+	{
+	    this.bombs[i].animate();
+	}
+    }
 };
