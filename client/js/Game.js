@@ -28,7 +28,6 @@ var Game = function()
     };
 
     this.move = function() {
-
 	//TODO: is it ok to round ?
         this.api.move(this.me.position.x, this.me.position.y, this.me.position.r);
     };
@@ -117,7 +116,8 @@ var Game = function()
 	this.animate();
 	this.controls.move();
 	//TODO : IT MIGHT NOT BE A VERY GOOD IDEA TO SEND DATA IN THE MAIN LOOP (?)
-	if(this.currentTime + MOVE_UPDATE_TIMER  > Date.now()) {
+	
+	if(this.currentTime + MOVE_UPDATE_TIMER  < Date.now()) {
 	    this.move();
 	    this.currentTime = Date.now();
 	}

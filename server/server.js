@@ -65,7 +65,7 @@ io.sockets.on('connection', function (socket) {
 	socket.player.x = d.x;
 	socket.player.y = d.y;
 	socket.player.r = d.r;
-	broadcast('players', _getPlayersInfo());
+	broadcast('players', _getPlayersInfo(), socket.player.id);
     });
 
     socket.on('shoot', function(data) {
@@ -78,7 +78,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('bomb', function(data) {
 	var d = JSON.parse(data);
-	var bomb = {"x":d.x, "y":d.y, "r":d.r, "s":d.s};
+	var bomb = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "s":d.s};
 	bombs.push(bombs);
 	broadcast('bomb', bomb, socket.player.id);
     });
