@@ -23,9 +23,9 @@ var Player = function(data) {
 
     this.updateFromServer = function(data) {
 	
-	this.position.x = data[i]['x'];
-	this.position.y = data[i]['y'];
-	this.position.r = data[i]['r'];
+	this.position.x = data.x;
+	this.position.y = data.y;
+	this.position.r = data.r;
 
 	this.model.updatePositions(data);
     };

@@ -116,7 +116,8 @@ var PlayerModel = function(player)
 	//update the position from datas received by the server, don't call this for the user
 	this.mesh.position.x = data.x;
 	this.mesh.position.y = data.y;
-	this.mesh.rotation.x = data.r;
+	this.mesh.rotation.y = data.r;
+	this.mesh.updateMatrix();
     };
 }
 

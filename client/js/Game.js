@@ -54,13 +54,16 @@ var Game = function() {
 
     this.addPlayer = function(data) {
 	this.info('New player '+data.id+' Spawn point: x='+data.x+' y='+data.y);
-	this.playerMap[data.id] = this.players.push(new Player(data));
+	this.playerMap[data.id] = this.players.push(new Player(data))-1;
+	
     };
 
     this.removePlayer = function(id) {
 	this.info('player leaving '+id);
 	//TODO: what about existing shoots, bombs, etc ?
-	_getPlayerById(id).destroy(); //clean destructor
+	//update the id->index map
+	for(i=this.playerMap[id]+1;i<this.players.length;i++) this.playerMap[this.player[i]] -= 1; //lol?
+	this._getPlayerById(id).destroy(); //clean destructor
 	this.players.splice(this.playerMap[id]);
 	delete this.playerMap[id];
     };
@@ -70,8 +73,12 @@ var Game = function() {
 	{
 	    if(data[i].id != this.me.id)
 	    {
-		if(this.playerMap[id] == undefined) this.addPlayer(data[i]);
-		else this.players[playerMap[id]].updatePosition(data[i]);
+		if(this.playerMap[data[i].id] == undefined) {
+		    this.addPlayer(data[i]);
+		}
+		else {
+		    this.players[this.playerMap[data[i].id]].updateFromServer(data[i]);
+		}
 	    }
 	}
     };
