@@ -1,6 +1,8 @@
 <html>
 <head>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="lib/Three.js"></script>
 <script src="lib/RequestAnimationFrame.js"></script>
@@ -18,6 +20,31 @@ background-color: #000000;
 margin: 0px;
 overflow: hidden;
 }
+
+.jauge{
+	height:15px;
+	margin:20px;
+	position:absolute;
+	width:1350px;
+}
+.text{
+	position:absolute;
+	margin-left:1400px;
+	color:white;
+	font-weight:bolder;
+	font-size:14px;
+}
+
+.shoot{
+	margin-top:10px;
+}
+.bomb{
+	margin-top:40px;
+}
+.life{
+	margin-top:70px;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -25,6 +52,12 @@ var game = null;
 jQuery(function() {
     game = new Game();
     game.init();
+	$("#shootCooldown").progressbar({ value: 100 });
+	$("#shootCooldown > div").css({ 'background': '#0f0' });
+	$("#bombCooldown").progressbar({ value: 100 });
+	$("#bombCooldown > div").css({ 'background': '#0f0' });
+	$("#lifeJauge").progressbar({ value: 100 });
+	$("#lifeJauge > div").css({ 'background': '#0f0' });
 });
 
 /*Api.js //talk to the server
@@ -51,5 +84,8 @@ Game.js //merge everything
 </script>
 </head>
 <body>
+<div id="shootCooldown" class="jauge shoot" ></div><span id="shootText" class="text shoot">SHOOT</span>
+<div id="bombCooldown" class="jauge bomb" ></div><span id="bombText" class="text bomb">BOMB</span>
+<div id="lifeJauge" class="jauge life" ></div><span id="lifeText" class="text life">LIFE</span>
 </body>
 </html>

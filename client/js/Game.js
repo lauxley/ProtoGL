@@ -1,4 +1,5 @@
-var Game = function() {
+var Game = function() 
+{
     /*
       is a singleton
       it is the main class of the game, that implement every other, the api, the webGL scene, the controls
@@ -27,9 +28,7 @@ var Game = function() {
     };
 
     this.move = function() {
-	function roundNumber(num, dec) {
-	    return Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
-	}
+	
 
 	//TODO: is it ok to round ?
         this.api.move(Math.round(this.me.position.x), Math.round(this.me.position.y), Math.round(this.me.position.r*1000)/1000);
@@ -95,15 +94,17 @@ var Game = function() {
 	}
     };
 
-    this.render = function() {
-	this.animate();
-	this.controls.move();
-	if(this.currentTime + MOVE_UPDATE_TIMER  > Date.UTC()) {
-	    this.move();
-	    this.currentTime = Date.UTC();
-	}
-	//TODO: send positions every X ms
-	this.scene.renderer.render( this.scene, this.scene.camera );
-	requestAnimationFrame( function() { game.render(); } );
+    this.render = function() 
+	{
+		this.animate();
+		this.controls.move();
+		if(this.currentTime + MOVE_UPDATE_TIMER  > Date.UTC()) 
+		{
+			this.move();
+			this.currentTime = Date.UTC();
+		}
+		//TODO: send positions every X ms
+		this.scene.renderer.render( this.scene, this.scene.camera );
+		requestAnimationFrame( function() { game.render(); } );
     };
 };

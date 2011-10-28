@@ -125,6 +125,8 @@ var ShootModel = function(player)
 {
     this.inheritFrom = Model;
     this.inheritFrom();
+	
+	this.animationKey = 250; // fade time
     
     material = new THREE.ParticleCanvasMaterial( { color: 0xff0000, program: this.particleRender } );
     shoot = new THREE.Particle(material);
