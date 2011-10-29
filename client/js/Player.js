@@ -40,7 +40,6 @@ var Player = function(data)
 	//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
 	var shoot = new ShootModel(this);
 	this.shoots.push(shoot);
-	game.lastShotTime = Date.now();
 	return shoot;
     }
 	
@@ -70,7 +69,6 @@ var Player = function(data)
 	// bomb only if cooldown ok
 	var bomb = new BombModel(this,power);
 	this.bombs.push(bomb);
-	game.lastBombTime = Date.now();
 	return bomb
     }
 
