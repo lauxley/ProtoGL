@@ -52,12 +52,6 @@ var game = null;
 jQuery(function() {
     game = new Game();
     game.init();
-	$("#shootCooldown").progressbar({ value: 100 });
-	$("#shootCooldown > div").css({ 'background': '#0f0' });
-	$("#bombCooldown").progressbar({ value: 100 });
-	$("#bombCooldown > div").css({ 'background': '#0f0' });
-	$("#lifeJauge").progressbar({ value: 100 });
-	$("#lifeJauge > div").css({ 'background': '#0f0' });
 });
 
 /*Api.js //talk to the server

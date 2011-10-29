@@ -130,7 +130,7 @@ var Controls = function(player) { //, domElement
 			this.bombPower++;
 			bombJauge = bombJauge - 1 ;
 			$("#bombCooldown").progressbar({ value: bombJauge });
-			if(bombJauge > 50 && bombJauge < 75)
+			if(bombJauge > 20 && bombJauge < 70)
 				$("#bombCooldown > div").css({ 'background': '#ff0' });
 			if(bombJauge < 25)
 				$("#bombCooldown > div").css({ 'background': '#f00' });

@@ -27,6 +27,12 @@ var Game = function()
 
     this.init = function() {
 	this.api = new Api(this); //call this.initScene when the player is connected
+	$("#shootCooldown").progressbar({ value: 100 });
+	$("#shootCooldown > div").css({ 'background': '#0f0' });
+	$("#bombCooldown").progressbar({ value: 100 });
+	$("#bombCooldown > div").css({ 'background': '#0f0' });
+	$("#lifeJauge").progressbar({ value: 100 });
+	$("#lifeJauge > div").css({ 'background': '#0f0' });
     };
 
     this.info = function(msg) {
@@ -139,7 +145,7 @@ var Game = function()
 	    this.lastBombTime = Date.now();
 	    bombCooldown++;
 	    $("#bombCooldown").progressbar({ value: bombCooldown });
-	    if(bombCooldown > 50 && bombCooldown < 75)
+	    if(bombCooldown > 20 && bombCooldown < 70)
 		$("#bombCooldown > div").css({ 'background': '#ff0' });
 	    if(bombCooldown > 75)
 		$("#bombCooldown > div").css({ 'background': '#0f0' });
