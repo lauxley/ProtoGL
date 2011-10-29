@@ -37,10 +37,10 @@ var Player = function(data)
 
     this.addShoot = function() 
     {
-	//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
-	var shoot = new ShootModel(this);
-	this.shoots.push(shoot);
-	return shoot;
+        //we may need a 'Shoot' or 'Bullet' class at some point, but not for now
+        var shoot = new ShootModel(this);
+        this.shoots.push(shoot);
+        return shoot;
     }
 	
     // gestion des projectiles
@@ -48,18 +48,42 @@ var Player = function(data)
     {
 	for(var i=0; i<this.shoots.length; i++)
 	{
-	    // if shoot is too far or if its timelife is over lets destroy the object
-	    if(this.animatonFrame > this.animationKey) {
+	    // if shoot timelife is over lets destroy the object
+	    if(this.animatonFrame > this.animationKey) 
+        {
 		this.shoots[i].destroy();
 		this.shoots.splice(i, 1);
 	    }
 	    else
 	    {
-		this.shoots[i].mesh.translateZ(-25);
-		this.shoots[i].animationFrame++;
+            this.shoots[i].mesh.translateZ(-25);
+			this.shoots[i].animationFrame++;
+			if (this.testForImpact(this.shoots[i]))
+            {
+                // on shoot impact destroy both the mesh and the reference in shoot array
+                this.shoots[i].destroy();
+                this.shoots.splice(i,1);
+            }
 	    }
 	}
     }
+	
+	this.testForImpact = function(shoot)
+	{
+		var rayX = -50 * Math.sin(shoot.mesh.rotation.y);
+        var rayY = -50 * Math.cos(shoot.mesh.rotation.y);
+        var ray = new THREE.Ray( shoot.mesh.position, new THREE.Vector3( rayX, rayY, 0 ) );
+        var collision = THREE.Collisions.rayCastNearest( ray );
+        if (collision && Math.abs(collision.distance) < 50 && collision.distance != -1)
+        {
+            var life = $("#lifeJauge").progressbar( "option", "value" );
+            life = life - 10;
+            $("#lifeJauge").progressbar({ value: life });
+            return true;
+        }
+        return false;
+
+	}
 
     this.addBomb = function(power) 
     {

@@ -32,12 +32,12 @@ function initScene() {
     scene.addObject(bordDroit);
     scene.addObject(bordHaut);
     scene.addObject(bordBas);
-	
+	/*
     THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( bordGauche ) );
     THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( bordHaut ) );
     THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( bordBas ) );
     THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( bordDroit ) );
-	
+	*/
     // create a point light
     /*var pointLight = new THREE.AmbientLight( 0xFFFFFF );
     // set its position
@@ -108,13 +108,13 @@ var PlayerModel = function(player)
     var material = new THREE.MeshLambertMaterial({ color: player.color });
     var mesh = new THREE.Mesh(new THREE.CylinderGeometry(10, 1 ,5, 30), material);
     mesh.matrixAutoUpdate = false;
-    mesh.rotation.x = 3*Math.PI/2;
+    mesh.rotation.x = mesh.rotation.z =  3*Math.PI/2;
     mesh.position.x = player.position.x;
     mesh.position.y = player.position.y;
     mesh.position.z = 50;
     mesh.scale.x = mesh.scale.y = mesh.scale.z = 3;
     mesh.updateMatrix();
-
+    THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( mesh ) );
     this.mesh = mesh;
     game.scene.addObject(this.mesh);
 
@@ -132,11 +132,11 @@ var ShootModel = function(player)
     this.inheritFrom = Model;
     this.inheritFrom();
 	
-	this.animationKey = 250; // fade time
-    
+	this.animationKey = 50; // fade time
+    this.animationFrame = 0;
     material = new THREE.ParticleCanvasMaterial( { color: 0xff0000, program: this.particleRender } );
     shoot = new THREE.Particle(material);
-    shoot.rotation.x = 3*Math.PI/2;
+    shoot.rotation.x = shoot.rotation.z =  3*Math.PI/2;
     shoot.position.x = player.position.x
     shoot.position.y = player.position.y
     shoot.position.z = 50;
