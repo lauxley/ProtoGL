@@ -71,14 +71,14 @@ io.sockets.on('connection', function (socket) {
     socket.on('shoot', function(data) {
 	var d = JSON.parse(data);
 	//r is the angle, s the strength
-	var shoot = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "s":d.s}; 
+	var shoot = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "p":d.p}; 
 	shoots.push(shoot);
 	broadcast('shoot', shoot, socket.player.id);
     });
 
     socket.on('bomb', function(data) {
 	var d = JSON.parse(data);
-	var bomb = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "s":d.s};
+	var bomb = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "p":d.p};
 	bombs.push(bombs);
 	broadcast('bomb', bomb, socket.player.id);
     });

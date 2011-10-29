@@ -83,7 +83,7 @@ var Controls = function(player) { //, domElement
 	if(this.movingDown == true) {// && collision != 4)
 	    if (this.lastMoveTime) {
 		var p = Date.now()-this.lastMoveTime;
-		this.player.model.mesh.translateZ(p/1000*this.playerSpeed);
+		this.player.model.mesh.translateZ(p/1000*this.playerSpeed*2/3);
 	    }
 	    this.lastMoveTime = Date.now();
 	}
@@ -143,7 +143,6 @@ var Controls = function(player) { //, domElement
 		}
 	}
 	
-
 	this.player.model.mesh.updateMatrix();	
 	this.player.updateFromControl();
     };

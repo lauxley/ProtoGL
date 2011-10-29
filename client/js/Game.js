@@ -14,7 +14,7 @@ var Game = function()
     this.playerMap = {}; //map of player.id -> index in this.players 
     this.me = null; //the user
 
-    this.currentTime = Date.now();
+    this.currentTime = Date.now(); //TODO : change to more explicit name
 
     this.initialized = false;
 
@@ -78,7 +78,7 @@ var Game = function()
     this.addBomb = function(data) {
 	//TODO: the current implementation place the bomb at the current 'client' player position;
 	//it should use the server's datas
-	this.players[this.playerMap[data.id]].addBomb();
+	this.players[this.playerMap[data.id]].addBomb(data.p);
     };
 
     this.removePlayer = function(id) {
@@ -148,8 +148,8 @@ var Game = function()
     }
 
     this.render = function() {
-	this.animate();
 	this.controls.move();
+	this.animate();
 	this.updateUI();
 	//TODO : IT MIGHT NOT BE A VERY GOOD IDEA TO SEND DATA IN THE MAIN LOOP (?)
 	

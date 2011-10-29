@@ -147,8 +147,8 @@ var BombModel = function(player,power)
 {
     this.inheritFrom = Model;
     this.inheritFrom();
-    this.animationKey = 150 + power * 3; //explosion frame
-    //alert(this.animationKey);
+    this.power = power;
+    this.animationKey = 150 + this.power * 3; //explosion frame
     var material = new THREE.ParticleCanvasMaterial( { color: 0x00ff00, program: this.particleRender } );
     var particle = new THREE.Particle(material);
     particle.position.x = player.position.x
@@ -161,7 +161,7 @@ var BombModel = function(player,power)
 
     this.animate = function() {
 	//make it grow untill explosion
-	if (this.animationFrame < this.animationKey-10) {
+	if (this.animationFrame < this.animationKey) {
 	    //TODO: the scale should depend on time, because framerate vary
 	    this.mesh.scale.x+=0.5;
 	    this.mesh.scale.y+=0.5;
