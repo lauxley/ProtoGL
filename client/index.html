@@ -3,15 +3,15 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
   <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="lib/Three.js"></script>
-<script src="lib/RequestAnimationFrame.js"></script>
-<script src="js/Player.js"></script>
-<script src="js/Game.js"></script>
-<script src="js/Controls.js"></script>
-<script src="js/Api.js"></script>
-<script src="js/Mesh.js"></script>
-
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="lib/Three.js"></script>
+  <script src="lib/RequestAnimationFrame.js"></script>
+  <script src="js/Player.js"></script>
+  <script src="js/Game.js"></script>
+  <script src="js/Controls.js"></script>
+  <script src="js/Api.js"></script>
+  <script src="js/Mesh.js"></script>
+  <script src="js/Stats.js"></script>
 <meta charset="utf-8">
 
 <style type="text/css">
@@ -29,20 +29,21 @@ overflow: hidden;
 }
 .text{
 	position:absolute;
-	left:1400px;
+	left:1360px;
 	color:white;
 	font-weight:bolder;
 	font-size:15px;
+        margin:20px;
 }
 
 .shoot{
-	top:10px;
+	top:0px;
 }
 .bomb{
-	top:40px;
+	top:30px;
 }
 .life{
-	top:70px;
+	top:60px;
 }
 
 .board{
@@ -59,8 +60,10 @@ overflow: hidden;
     padding:10px;
 }
 
-.board #content {
-    opacity:1;
+.stats {
+    position:absolute;
+    right:20px;
+    top:20px;
 }
 
 </style>
@@ -68,8 +71,14 @@ overflow: hidden;
 <script type="text/javascript">
 var game = null;
 jQuery(function() {
-game = new Game();
+    game = new Game();
     game.init();
+    
+    //TODO: move this
+    stats = new Stats();
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.bottom = '300px';
+    $('#stats').appendChild( stats.domElement );
 });
 
 /*Api.js //talk to the server
@@ -100,5 +109,6 @@ Game.js //merge everything
 <div id="bombCooldown" class="jauge bomb" ></div><span id="bombText" class="text bomb">BOMB</span>
 <div id="lifeJauge" class="jauge life" ></div><span id="lifeText" class="text life">LIFE</span>
 <div id="msgBoard" class="board"><span>ProtoGL<hr></span><div id="content"><div></div>
+<div id="#stats" class="stats"></stats>
 </body>
 </html>

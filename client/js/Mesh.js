@@ -132,9 +132,9 @@ var ShootModel = function(player)
     this.inheritFrom = Model;
     this.inheritFrom();
 	
-	this.animationKey = 50; // fade time
+    this.animationKey = 50; // fade time
     this.animationFrame = 0;
-    material = new THREE.ParticleCanvasMaterial( { color: 0xff0000, program: this.particleRender } );
+    material = new THREE.ParticleCanvasMaterial( { color: player.color, program: this.particleRender } );
     shoot = new THREE.Particle(material);
     shoot.owner = player.id;
     shoot.rotation.x = shoot.rotation.z =  3*Math.PI/2;
@@ -156,7 +156,7 @@ var BombModel = function(player,power)
     this.inheritFrom();
     this.power = power;
     this.animationKey = 150 + this.power * 3; //explosion frame
-    var material = new THREE.ParticleCanvasMaterial( { color: 0x00ff00, program: this.particleRender } );
+    var material = new THREE.ParticleCanvasMaterial( { color: player.color, program: this.particleRender } );
     var particle = new THREE.Particle(material);
     particle.position.x = player.position.x
     particle.position.y = player.position.y

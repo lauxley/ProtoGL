@@ -166,6 +166,9 @@ var Game = function()
 	    this.currentTime = Date.now();
 	}
 	this.scene.renderer.render( this.scene, this.scene.camera );
+
+	stats.update();
+
 	requestAnimationFrame( function() { game.render(); } );
     };
 };
