@@ -81,9 +81,13 @@ var Player = function(data)
         var collision = THREE.Collisions.rayCastNearest( ray );
         if (collision && Math.abs(collision.distance) < 50 && collision.distance != -1)
         {
-            var life = $("#lifeJauge").progressbar( "option", "value" );
-            life = life - 10;
-            $("#lifeJauge").progressbar({ value: life });
+            // remove life only if shooter_id != me
+            if (shoot.mesh.owner != game.me.id)
+            {
+                var life = $("#lifeJauge").progressbar( "option", "value" );
+                life = life - 10;
+                $("#lifeJauge").progressbar({ value: life });
+            }
             return true;
         }
         return false;

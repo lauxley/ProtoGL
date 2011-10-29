@@ -136,6 +136,7 @@ var ShootModel = function(player)
     this.animationFrame = 0;
     material = new THREE.ParticleCanvasMaterial( { color: 0xff0000, program: this.particleRender } );
     shoot = new THREE.Particle(material);
+    shoot.owner = player.id;
     shoot.rotation.x = shoot.rotation.z =  3*Math.PI/2;
     shoot.position.x = player.position.x
     shoot.position.y = player.position.y
