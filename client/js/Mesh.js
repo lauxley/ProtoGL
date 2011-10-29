@@ -16,8 +16,8 @@ function initScene() {
 
 
     //Game field
-    var material = new THREE.MeshLambertMaterial({ color: player.color });
-    var mesh = new THREE.Mesh(new THREE.CylinderGeometry(10, 1 ,5, 30), material);
+    //var material = new THREE.MeshLambertMaterial({ color: player.color });
+    //var mesh = new THREE.Mesh(new THREE.CylinderGeometry(10, 1 ,5, 30), material);
     
 
     var bordGauche = new THREE.Mesh( new THREE.CubeGeometry( 50, 1220, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );

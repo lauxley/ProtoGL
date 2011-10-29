@@ -51,7 +51,7 @@ var Player = function(data)
 	    // if shoot is too far or if its timelife is over lets destroy the object
 	    if(this.animatonFrame > this.animationKey) {
 		this.shoots[i].destroy();
-		delete this.shoots[i];
+		this.shoots.splice(i);
 	    }
 	    else
 	    {
@@ -76,7 +76,9 @@ var Player = function(data)
 	for(var i=0; i<this.bombs.length; i++)
 	{
 	    var isAlive = this.bombs[i].animate();
-	    if (!isAlive) delete this.bombs[i];
+	    if (!isAlive) {
+		this.bombs.splice(i);
+	    }
 	}
     }
 };
