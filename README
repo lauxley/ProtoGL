@@ -1,8 +1,9 @@
 This is a Prototype/technology test for a small Multiplayer Game based on WebGL/node.js
 
+Requirements
+
 Known bugs:
 * Keyboard bug : On some keyboards, you can't push UP+LEFT+SPACE (http://en.wikipedia.org/wiki/Rollover_(key)#Key_jamming_and_ghosting)
-* The player 'ship' is not on the same plane as others (roughtly 45°)
 * the positions of enemy players seems not to be well synched
 * when you change tab the game stays in the same state (may have to use timers for everything !)
 
@@ -11,15 +12,21 @@ TODO:
 * collisions
 * weapon hits & player life
 * try to lower/optimize the datas sent
-  - don't send moving data if a player don't move
   - try to merge some queries
   - check if there is a way to lower the http datas
 * benchmark for memory usage client side
 * cleanup the names in Game.js and Api.js so it is more clear what method is called when receiving data and when sending data (bomb addBomb are not explicit enough)
+* improve the way shoots & bombs are destroyed
 
 less important
-* do some server side checks for cheating
+* do some server side checks for cheating, and invalid datas (its currently crashing the server)
 * third person camera
-* make a UI class with hooks
+* make a UI class with hooks / better UI
 * a real game field
 * better player model
+* respawn
+* choose a nickname
+
+DONE:
+* don't send moving data if a player don't move
+* The player 'ship' is not on the same plane as others (roughtly 45°)

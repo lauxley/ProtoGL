@@ -49,12 +49,10 @@ var Player = function(data)
 	for(var i=0; i<this.shoots.length; i++)
 	{
 	    // if shoot is too far or if its timelife is over lets destroy the object
-	    if(this.shoots[i].mesh.position.x >1000 ||
-	       this.shoots[i].mesh.position.x < -1000 ||
-	       this.shoots[i].mesh.position.y < -1000 ||
-	       this.shoots[i].mesh.position.y > 1000 ||
-	       this.animatonFrame > this.animationKey)
+	    if(this.animatonFrame > this.animationKey) {
 		this.shoots[i].destroy();
+		delete this.shoots[i];
+	    }
 	    else
 	    {
 		this.shoots[i].mesh.translateZ(-25);
@@ -77,7 +75,8 @@ var Player = function(data)
     {
 	for(var i=0; i<this.bombs.length; i++)
 	{
-	    this.bombs[i].animate();
+	    var isAlive = this.bombs[i].animate();
+	    if (!isAlive) delete this.bombs[i];
 	}
     }
 };
