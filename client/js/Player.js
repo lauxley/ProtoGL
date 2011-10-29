@@ -46,33 +46,38 @@ var Player = function(data)
     // gestion des projectiles
     this.updateShoots = function()
     {
-	for(var i=0; i<this.shoots.length; i++)
-	{
-	    // if shoot timelife is over lets destroy the object
-	    if(this.animatonFrame > this.animationKey) 
+        for(var i=0; i<this.shoots.length; i++)
         {
-		this.shoots[i].destroy();
-		this.shoots.splice(i, 1);
-	    }
-	    else
-	    {
-            this.shoots[i].mesh.translateZ(-25);
-			this.shoots[i].animationFrame++;
-			if (this.testForImpact(this.shoots[i]))
+            // if shoot timelife is over lets destroy the object
+            if(this.shoots[i].animationFrame > this.shoots[i].animationKey) 
             {
-                // on shoot impact destroy both the mesh and the reference in shoot array
                 this.shoots[i].destroy();
-                this.shoots.splice(i,1);
+                this.shoots.splice(i, 1);
             }
-	    }
-	}
+            else
+            {
+                
+                this.shoots[i].mesh.translateZ(-25);
+                this.shoots[i].animationFrame++;
+                // test only for collision after shoot frame 3 to avoid collision with own ship
+                if(this.shoots[i].animationFrame > 3)
+                {
+                    if (this.testForImpact(this.shoots[i]))
+                    {
+                        // on shoot impact destroy both the mesh and the reference in shoot array
+                        this.shoots[i].destroy();
+                        this.shoots.splice(i,1);
+                    }
+                }
+            }
+        }
     }
 	
 	this.testForImpact = function(shoot)
 	{
-		var rayX = -50 * Math.sin(shoot.mesh.rotation.y);
+        var rayX = -50 * Math.sin(shoot.mesh.rotation.y);
         var rayY = -50 * Math.cos(shoot.mesh.rotation.y);
-        var ray = new THREE.Ray( shoot.mesh.position, new THREE.Vector3( rayX, rayY, 0 ) );
+        var ray = new THREE.Ray( shoot.mesh.position, new THREE.Vector3( rayX, rayY, 50 ) );
         var collision = THREE.Collisions.rayCastNearest( ray );
         if (collision && Math.abs(collision.distance) < 50 && collision.distance != -1)
         {
