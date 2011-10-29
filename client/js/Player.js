@@ -37,18 +37,10 @@ var Player = function(data)
 
     this.addShoot = function() 
     {
-<<<<<<< HEAD
-		//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
-		var shoot = new ShootModel(this);
-		this.shoots.push(shoot);
-		game.lastShotTime = Date.now();
-		return shoot;
-=======
-	//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
-	var shoot = new ShootModel(this);
-	this.shoots.push(shoot);
-	return shoot;
->>>>>>> 015cee758ba76ec7b18ebfdcba1e3f1d9a46f4dd
+        //we may need a 'Shoot' or 'Bullet' class at some point, but not for now
+        var shoot = new ShootModel(this);
+        this.shoots.push(shoot);
+        return shoot;
     }
 	
     // gestion des projectiles
