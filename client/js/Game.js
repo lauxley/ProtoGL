@@ -18,6 +18,13 @@ var Game = function()
 
     this.initialized = false;
 
+    this.lastShotTime = 0;
+    this.lastBombTime = 0;
+    this.shotCooldown = 100;
+    this.shotReplenish = 250;
+    this.bombReplenish = 350;
+    this.bombCooldown = 100;
+
     this.init = function() {
 	this.api = new Api(this); //call this.initScene when the player is connected
     };
@@ -71,7 +78,7 @@ var Game = function()
     this.addBomb = function(data) {
 	//TODO: the current implementation place the bomb at the current 'client' player position;
 	//it should use the server's datas
-	this.players[data.id].addBomb();
+	this.players[this.playerMap[data.id]].addBomb();
     };
 
     this.removePlayer = function(id) {
@@ -112,9 +119,38 @@ var Game = function()
     };
 
 
+    this.updateUI = function() {
+	// replenish shoot gauge
+	shootJauge = $("#shootCooldown").progressbar( "option", "value" );
+	if(shootJauge < 100 && this.lastShotTime + this.shotReplenish < Date.now())
+	{
+	    this.lastShotTime = Date.now();
+	    shootJauge++;
+	    if(shootJauge > 50 && shootJauge < 75)
+		$("#shootCooldown > div").css({ 'background': '#ff0' });
+	    if(shootJauge > 75)
+		$("#shootCooldown > div").css({ 'background': '#0f0' });
+	    $("#shootCooldown").progressbar({ value: shootJauge });
+	}
+
+	var bombCooldown = $( "#bombCooldown" ).progressbar( "option", "value" );
+	if(bombCooldown < 100 && this.lastBombTime + this.bombReplenish  < Date.now())
+	{
+	    this.lastBombTime = Date.now();
+	    bombCooldown++;
+	    $("#bombCooldown").progressbar({ value: bombCooldown });
+	    if(bombCooldown > 50 && bombCooldown < 75)
+		$("#bombCooldown > div").css({ 'background': '#ff0' });
+	    if(bombCooldown > 75)
+		$("#bombCooldown > div").css({ 'background': '#0f0' });
+	}
+
+    }
+
     this.render = function() {
 	this.animate();
 	this.controls.move();
+	this.updateUI();
 	//TODO : IT MIGHT NOT BE A VERY GOOD IDEA TO SEND DATA IN THE MAIN LOOP (?)
 	
 	if(this.currentTime + MOVE_UPDATE_TIMER  < Date.now()) {

@@ -6,12 +6,16 @@ var Controls = function(player) { //, domElement
     this.movingRight = false;
     this.shooting = false;
     this.bombing = false;
-	this.bombPower = 0;
-	this.firstPush = true;
+    this.bombPower = 0;
+    this.firstPush = true;
+    this.lastMoveTime = null;
+    this.playerSpeed = 500;//in unit/sec
+    this.turnSpeed = Math.PI*1.5;//in rad/sec
+
     //this.domElement = domElement;
 
     // key listeners
-   this.onKeyDown = function(e){ 
+   this.onKeyDown = function(e){
        if(e.keyCode == 37)
 	   this.movingLeft = true;
        if(e.keyCode == 38)
@@ -23,18 +27,26 @@ var Controls = function(player) { //, domElement
        if(e.keyCode == 32)
 	   this.shooting = true;
        if(e.keyCode == 17 && getBombJauge() > 20)
-		this.bombing = true;
+	   this.bombing = true;
 
    };
    this.onKeyUp = function(e){
-       if(e.keyCode == 37)
+       if(e.keyCode == 37) {
 	   this.movingLeft = false;
-       if(e.keyCode == 38)
+	   this.lastTurnTime = null;
+       }
+       if(e.keyCode == 38) {
 	   this.movingUp = false;
-       if(e.keyCode == 39)
+	   this.lastMoveTime = null;
+       }
+       if(e.keyCode == 39) {
 	   this.movingRight = false;
-       if(e.keyCode == 40)
+	   this.lastTurnTime = null;
+       }
+       if(e.keyCode == 40) {
 	   this.movingDown = false;
+	   this.lastMoveTime = null;	   
+       }
        if(e.keyCode == 32)
 	   this.shooting = false;
        if(e.keyCode == 17)
@@ -61,21 +73,38 @@ var Controls = function(player) { //, domElement
     this.move = function ()
     {
 	//var collision = scene.detectCollision(this.me);
-	
-	//TODO : speed depends on the framerate ?!
-
-	if(this.movingUp == true)// && collision != 3)
-	    this.player.model.mesh.translateZ(-10);
-	if(this.movingDown == true)// && collision != 4)
-	    this.player.model.mesh.translateZ(10);
-	if(this.movingLeft == true)// && collision != 1)
-	    this.player.model.mesh.rotation.y -= 0.1;
-	if(this.movingRight == true)// && collision != 2)
-	    this.player.model.mesh.rotation.y += 0.1;
+	if(this.movingUp == true) {// && collision != 3)
+	    if (this.lastMoveTime) {
+		var p = Date.now()-this.lastMoveTime;
+		this.player.model.mesh.translateZ(-p/1000*this.playerSpeed);
+	    }
+	    this.lastMoveTime = Date.now();
+	}
+	if(this.movingDown == true) {// && collision != 4)
+	    if (this.lastMoveTime) {
+		var p = Date.now()-this.lastMoveTime;
+		this.player.model.mesh.translateZ(p/1000*this.playerSpeed);
+	    }
+	    this.lastMoveTime = Date.now();
+	}
+	if(this.movingLeft == true) {// && collision != 1)
+	    if (this.lastTurnTime) {
+		var p = Date.now()-this.lastTurnTime;
+		this.player.model.mesh.rotation.y -= p/1000*this.turnSpeed;
+	    }
+	    this.lastTurnTime = Date.now();
+	}
+	if(this.movingRight == true) {// && collision != 2)
+	    if (this.lastTurnTime) {
+		var p = Date.now()-this.lastTurnTime;
+		this.player.model.mesh.rotation.y += p/1000*this.turnSpeed;
+	    }
+	    this.lastTurnTime = Date.now();
+	}
 	if(this.shooting == true)
 	{
 	    shootJauge = $("#shootCooldown").progressbar( "option", "value" );
-		if(this.player.lastShotTime + this.player.shotCooldown  < Date.now() && shootJauge > 3) 
+		if(game.lastShotTime + game.shotCooldown  < Date.now() && shootJauge > 3) 
 		{		
 			shootJauge = shootJauge - 3;
 			$("#shootCooldown").progressbar({ value: shootJauge });
@@ -91,7 +120,7 @@ var Controls = function(player) { //, domElement
 	{	
 		bombJauge = $("#bombCooldown").progressbar( "option", "value" );
 
-		if(this.player.lastBombTime + this.player.bombCooldown  < Date.now() && bombJauge > 0) 
+		if(game.lastBombTime + game.bombCooldown  < Date.now() && bombJauge > 0) 
 		{	
 			if(this.firstPush == true)
 			{
