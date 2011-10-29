@@ -6,7 +6,7 @@ var Api = function(game) {
       This class is straightforward, it is the link between the Socket and the Game instances
     */
 
-    game.info('Connecting...');
+    game.info('Connecting on '+HOST+':'+PORT+'...');
     this.socket = io.connect(HOST, {port:PORT});
 
     this.socket.on('connect', function (data) {

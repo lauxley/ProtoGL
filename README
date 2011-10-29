@@ -21,11 +21,12 @@ TODO:
 less important
 * do some server side checks for cheating, and invalid datas (its currently crashing the server)
 * third person camera
-* make a UI class with hooks / better UI
+* make a UI class with hooks / better UI + css
 * a real game field
 * better player model
 * respawn
 * choose a nickname
+* browser compatibility (jk)
 
 DONE:
 * don't send moving data if a player don't move

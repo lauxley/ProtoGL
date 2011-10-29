@@ -32,6 +32,7 @@ var Game = function()
     this.info = function(msg) {
 	//TODO : a widget to print the system msgs (and a chat ?)
         console.log(msg);
+	$('#content','#msgBoard').append('<br>'+msg);
     };
 
     this.move = function() {
@@ -44,7 +45,7 @@ var Game = function()
     };
 
     this.initScene = function(data) {
-	this.info('I am '+data.id+' Spawn point: x='+data.x+' y='+data.y);
+	this.info('I am #'+data.id+' Spawn point: x='+data.x+' y='+data.y);
 	this.scene = initScene();
 	this.me = new Player(data);
 	//bind the controls to the created Player
@@ -87,7 +88,7 @@ var Game = function()
 	//update the id->index map
 	for(i=this.playerMap[id]+1;i<this.players.length;i++) this.playerMap[this.players[i]] -= 1; //lol?
 	this._getPlayerById(id).destroy(); //clean destructor
-	this.players.splice(this.playerMap[id]);
+	this.players.splice(this.playerMap[id], 1);
 	delete this.playerMap[id];
     };
 
@@ -148,6 +149,7 @@ var Game = function()
     }
 
     this.render = function() {
+	//this.info('test');
 	this.controls.move();
 	this.animate();
 	this.updateUI();

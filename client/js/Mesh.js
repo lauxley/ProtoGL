@@ -108,7 +108,7 @@ var PlayerModel = function(player)
     var material = new THREE.MeshLambertMaterial({ color: player.color });
     var mesh = new THREE.Mesh(new THREE.CylinderGeometry(10, 1 ,5, 30), material);
     mesh.matrixAutoUpdate = false;
-    mesh.rotation.x = 90*(180/Math.PI);
+    mesh.rotation.x = 3*Math.PI/2;
     mesh.position.x = player.position.x;
     mesh.position.y = player.position.y;
     mesh.position.z = 50;
@@ -136,7 +136,7 @@ var ShootModel = function(player)
     
     material = new THREE.ParticleCanvasMaterial( { color: 0xff0000, program: this.particleRender } );
     shoot = new THREE.Particle(material);
-    shoot.rotation.x = 90*(180/Math.PI);
+    shoot.rotation.x = 3*Math.PI/2;
     shoot.position.x = player.position.x
     shoot.position.y = player.position.y
     shoot.position.z = 50;

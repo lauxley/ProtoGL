@@ -29,20 +29,38 @@ overflow: hidden;
 }
 .text{
 	position:absolute;
-	margin-left:1400px;
+	left:1400px;
 	color:white;
 	font-weight:bolder;
 	font-size:15px;
 }
 
 .shoot{
-	margin-top:10px;
+	top:10px;
 }
 .bomb{
-	margin-top:40px;
+	top:40px;
 }
 .life{
-	margin-top:70px;
+	top:70px;
+}
+
+.board{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    width:300px;
+    height:200px;
+    overflow-y:auto;
+    color:#fff;
+    background-color:#55c;
+    background-color: rgba(50, 50, 160, 0.3);
+    font-size:10px;
+    padding:10px;
+}
+
+.board #content {
+    opacity:1;
 }
 
 </style>
@@ -50,7 +68,7 @@ overflow: hidden;
 <script type="text/javascript">
 var game = null;
 jQuery(function() {
-    game = new Game();
+game = new Game();
     game.init();
 	$("#shootCooldown").progressbar({ value: 100 });
 	$("#shootCooldown > div").css({ 'background': '#0f0' });
@@ -87,5 +105,6 @@ Game.js //merge everything
 <div id="shootCooldown" class="jauge shoot" ></div><span id="shootText" class="text shoot">SHOOT</span>
 <div id="bombCooldown" class="jauge bomb" ></div><span id="bombText" class="text bomb">BOMB</span>
 <div id="lifeJauge" class="jauge life" ></div><span id="lifeText" class="text life">LIFE</span>
+<div id="msgBoard" class="board"><span>ProtoGL<hr></span><div id="content"><div></div>
 </body>
 </html>
