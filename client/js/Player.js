@@ -9,7 +9,7 @@ var Player = function(data)
 	this.lastBombTime = 0;
 	this.shotCooldown = 100;
 	this.shotReplenish = 250;
-	this.bombReplenish = 250;
+	this.bombReplenish = 350;
 	this.bombCooldown = 100;
 	this.shootJauge = 100;
     this.id = data.id;
@@ -83,11 +83,11 @@ var Player = function(data)
 		}
     }
 
-    this.addBomb = function() 
+    this.addBomb = function(power) 
 	{
 		//we may need a 'Bomb' class at some point, but not for now
 		// bomb only if cooldown ok
-		var bomb = new BombModel(this);
+		var bomb = new BombModel(this,power);
 		this.bombs.push(bomb);
 		this.lastBombTime = Date.now();
 		return bomb

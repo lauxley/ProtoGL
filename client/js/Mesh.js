@@ -143,13 +143,12 @@ var ShootModel = function(player)
     game.scene.addObject(this.mesh);
 };
 	
-var BombModel = function(player)
+var BombModel = function(player,power)
 {
     this.inheritFrom = Model;
     this.inheritFrom();
-
-    this.animationKey = 150; //explosion frame
-    
+    this.animationKey = 150 + power * 3; //explosion frame
+    //alert(this.animationKey);
     var material = new THREE.ParticleCanvasMaterial( { color: 0x00ff00, program: this.particleRender } );
     var particle = new THREE.Particle(material);
     particle.position.x = player.position.x

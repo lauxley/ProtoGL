@@ -6,7 +6,8 @@ var Controls = function(player) { //, domElement
     this.movingRight = false;
     this.shooting = false;
     this.bombing = false;
-   
+	this.bombPower = 0;
+	this.firstPush = true;
     //this.domElement = domElement;
 
     // key listeners
@@ -21,8 +22,9 @@ var Controls = function(player) { //, domElement
 	   this.movingDown = true;
        if(e.keyCode == 32)
 	   this.shooting = true;
-       if(e.keyCode == 17)
-	   this.bombing = true;
+       if(e.keyCode == 17 && getBombJauge() > 20)
+		this.bombing = true;
+
    };
    this.onKeyUp = function(e){
        if(e.keyCode == 37)
@@ -36,9 +38,20 @@ var Controls = function(player) { //, domElement
        if(e.keyCode == 32)
 	   this.shooting = false;
        if(e.keyCode == 17)
-	   this.bombing = false;
+	   {
+		if(this.bombing == true)
+		{
+			this.bombing = false;
+			this.dropBomb();
+		}
+	   }
    };
-
+	
+	function getBombJauge()
+	{
+		return $("#bombCooldown").progressbar( "option", "value" );
+	}
+	
     function bind( scope, fn ) { return function () { fn.apply( scope, arguments ); }; };
 
     document.addEventListener( 'keydown', bind( this, this.onKeyDown ), false );
@@ -75,22 +88,42 @@ var Controls = function(player) { //, domElement
 		}
 	}
 	if(this.bombing == true)
-	{
+	{	
 		bombJauge = $("#bombCooldown").progressbar( "option", "value" );
-		if(this.player.lastBombTime + this.player.bombCooldown  < Date.now() && bombJauge > 33) 
-		{		
-			bombJauge = bombJauge - 33;
+
+		if(this.player.lastBombTime + this.player.bombCooldown  < Date.now() && bombJauge > 0) 
+		{	
+			if(this.firstPush == true)
+			{
+				bombJauge = bombJauge - 15;
+				this.firstPush = false;
+			}
+			this.bombPower++;
+			bombJauge = bombJauge - 1 ;
 			$("#bombCooldown").progressbar({ value: bombJauge });
 			if(bombJauge > 50 && bombJauge < 75)
 				$("#bombCooldown > div").css({ 'background': '#ff0' });
 			if(bombJauge < 25)
 				$("#bombCooldown > div").css({ 'background': '#f00' });
-			var bomb = this.player.addBomb();
-			game.bomb(bomb);
+
+		}
+		else if(bombJauge <= 0)
+		{
+			this.dropBomb();
+			this.bombing = false;
 		}
 	}
+	
 
 	this.player.model.mesh.updateMatrix();	
 	this.player.updateFromControl();
     };
+	
+	this.dropBomb = function()
+	{
+		var bomb = this.player.addBomb(this.bombPower);
+		game.bomb(bomb);
+		this.bombPower = 0;
+		this.firstPush = true;
+	}
 }
