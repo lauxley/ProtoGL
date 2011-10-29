@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 
+
 var id = 1;
 var players = [];
 var shoots = [];
@@ -28,7 +29,7 @@ var app = require('http').createServer(function (req, res) {
 	    res.writeHead(200);
 	    res.end(data);
 	});
-}).listen(8000);;
+}).listen(8000);
 var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function (socket) {
@@ -46,14 +47,12 @@ io.sockets.on('connection', function (socket) {
     var r = Math.round(Math.random()*360); //angle
     var player = {"id":id, "x":x, "y":y, "r":r};
     socket.emit('welcome', player);
-    //players.push(player);
     socket.emit('players', _getPlayersInfo());
-    broadcast('new_player', player, id);
+    broadcast('new_player', player, player.id);
     socket.player = player;
     sockets[id] = socket;
 
     id++;
-    //broadcast('info', 'there is now '+Object.keys(players).length+' players in the field!');
 
     socket.on('disconnect', function() {
 	broadcast('player_leave', socket.player.id, socket.player.id);
@@ -61,24 +60,31 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('move', function(data) {
+
+	function has_moved(d) {
+	    return (socket.player.x != d.x || socket.player.y != d.y || socket.player.r != d.r)
+	}
+
 	var d = JSON.parse(data);
-	socket.player.x = d.x;
-	socket.player.y = d.y;
-	socket.player.r = d.r;
-	broadcast('players', _getPlayersInfo(), socket.player.id);
+	if (has_moved(d)) {
+	    socket.player.x = d.x;
+	    socket.player.y = d.y;
+	    socket.player.r = d.r;
+	    broadcast('players', [socket.player], socket.player.id);
+	}
     });
 
     socket.on('shoot', function(data) {
 	var d = JSON.parse(data);
 	//r is the angle, s the strength
-	var shoot = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "s":d.s}; 
+	var shoot = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "p":d.p}; 
 	shoots.push(shoot);
 	broadcast('shoot', shoot, socket.player.id);
     });
 
     socket.on('bomb', function(data) {
 	var d = JSON.parse(data);
-	var bomb = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "s":d.s};
+	var bomb = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "p":d.p};
 	bombs.push(bombs);
 	broadcast('bomb', bomb, socket.player.id);
     });

@@ -26,9 +26,8 @@ var Controls = function(player) { //, domElement
 	   this.movingDown = true;
        if(e.keyCode == 32)
 	   this.shooting = true;
-       if(e.keyCode == 17 && getBombJauge() > 20)
+       if(e.keyCode == 17 && getBombJauge() > 20) //move this, along with the shoot cooldown and ressource logic
 	   this.bombing = true;
-
    };
    this.onKeyUp = function(e){
        if(e.keyCode == 37) {
@@ -50,13 +49,13 @@ var Controls = function(player) { //, domElement
        if(e.keyCode == 32)
 	   this.shooting = false;
        if(e.keyCode == 17)
+       {
+	   if(this.bombing == true)
 	   {
-		if(this.bombing == true)
-		{
-			this.bombing = false;
-			this.dropBomb();
-		}
+	       this.bombing = false;
+	       this.dropBomb();
 	   }
+       }
    };
 	
 	function getBombJauge()
@@ -83,7 +82,7 @@ var Controls = function(player) { //, domElement
 	if(this.movingDown == true) {// && collision != 4)
 	    if (this.lastMoveTime) {
 		var p = Date.now()-this.lastMoveTime;
-		this.player.model.mesh.translateZ(p/1000*this.playerSpeed);
+		this.player.model.mesh.translateZ(p/1000*this.playerSpeed*2/3);
 	    }
 	    this.lastMoveTime = Date.now();
 	}
@@ -104,17 +103,19 @@ var Controls = function(player) { //, domElement
 	if(this.shooting == true)
 	{
 	    shootJauge = $("#shootCooldown").progressbar( "option", "value" );
-		if(game.lastShotTime + game.shotCooldown  < Date.now() && shootJauge > 3) 
-		{		
-			shootJauge = shootJauge - 3;
-			$("#shootCooldown").progressbar({ value: shootJauge });
-			if(shootJauge > 50 && shootJauge < 75)
-				$("#shootCooldown > div").css({ 'background': '#ff0' });
-			if(shootJauge < 25)
-				$("#shootCooldown > div").css({ 'background': '#f00' });
-			var shoot = this.player.addShoot();
-			game.shoot(shoot);
-		}
+	    if(game.lastShotTime + game.shotCooldown  < Date.now() && shootJauge > 3) 
+	    {		
+		shootJauge = shootJauge - 3;
+		$("#shootCooldown").progressbar({ value: shootJauge });
+		if(shootJauge > 50 && shootJauge < 75)
+		    $("#shootCooldown > div").css({ 'background': '#ff0' });
+		if(shootJauge < 25)
+		    $("#shootCooldown > div").css({ 'background': '#f00' });
+		var shoot = this.player.addShoot();
+		
+		game.lastShotTime = Date.now();
+		game.shoot(shoot);
+	    }
 	}
 	if(this.bombing == true)
 	{	
@@ -143,16 +144,16 @@ var Controls = function(player) { //, domElement
 		}
 	}
 	
-
 	this.player.model.mesh.updateMatrix();	
 	this.player.updateFromControl();
     };
-	
-	this.dropBomb = function()
-	{
-		var bomb = this.player.addBomb(this.bombPower);
-		game.bomb(bomb);
-		this.bombPower = 0;
-		this.firstPush = true;
-	}
+    
+    this.dropBomb = function()
+    {
+	var bomb = this.player.addBomb(this.bombPower);
+	game.lastBombTime = Date.now();
+	game.bomb(bomb);
+	this.bombPower = 0;
+	this.firstPush = true;
+    }
 }

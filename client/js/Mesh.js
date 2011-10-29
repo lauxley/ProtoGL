@@ -14,6 +14,12 @@ function initScene() {
     scene.renderer = new THREE.CanvasRenderer();
     scene.renderer.setSize( window.innerWidth, window.innerHeight );
 
+
+    //Game field
+    //var material = new THREE.MeshLambertMaterial({ color: player.color });
+    //var mesh = new THREE.Mesh(new THREE.CylinderGeometry(10, 1 ,5, 30), material);
+    
+
     var bordGauche = new THREE.Mesh( new THREE.CubeGeometry( 50, 1220, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );
     var bordDroit =  new THREE.Mesh( new THREE.CubeGeometry( 50, 1220, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );
     var bordHaut =  new THREE.Mesh( new THREE.CubeGeometry( 1800, 50, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );
@@ -147,8 +153,8 @@ var BombModel = function(player,power)
 {
     this.inheritFrom = Model;
     this.inheritFrom();
-    this.animationKey = 150 + power * 3; //explosion frame
-    //alert(this.animationKey);
+    this.power = power;
+    this.animationKey = 150 + this.power * 3; //explosion frame
     var material = new THREE.ParticleCanvasMaterial( { color: 0x00ff00, program: this.particleRender } );
     var particle = new THREE.Particle(material);
     particle.position.x = player.position.x
@@ -161,14 +167,17 @@ var BombModel = function(player,power)
 
     this.animate = function() {
 	//make it grow untill explosion
-	if (this.animationFrame < this.animationKey-10) {
+	if (this.animationFrame < this.animationKey) {
 	    //TODO: the scale should depend on time, because framerate vary
 	    this.mesh.scale.x+=0.5;
 	    this.mesh.scale.y+=0.5;
 	} else {
 	    this.explode();
+	    //TODO: to tell the Player instance to destroy the shoot, this is ugly
+	    return false;
 	}
 	this.animationFrame++;
+	return true;
     }
 
     this.explode = function() {

@@ -37,11 +37,18 @@ var Player = function(data)
 
     this.addShoot = function() 
     {
+<<<<<<< HEAD
 		//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
 		var shoot = new ShootModel(this);
 		this.shoots.push(shoot);
 		game.lastShotTime = Date.now();
 		return shoot;
+=======
+	//we may need a 'Shoot' or 'Bullet' class at some point, but not for now
+	var shoot = new ShootModel(this);
+	this.shoots.push(shoot);
+	return shoot;
+>>>>>>> 015cee758ba76ec7b18ebfdcba1e3f1d9a46f4dd
     }
 	
     // gestion des projectiles
@@ -50,8 +57,11 @@ var Player = function(data)
 	for(var i=0; i<this.shoots.length; i++)
 	{
 	    // if shoot timelife is over lets destroy the object
-	    if(this.shoots[i].animationFrame > this.shoots[i].animationKey)
-            this.shoots[i].destroy();
+	    if(this.animatonFrame > this.animationKey) 
+        {
+		this.shoots[i].destroy();
+		this.shoots.splice(i);
+	    }
 	    else
 	    {
             this.shoots[i].mesh.translateZ(-25);
@@ -89,7 +99,6 @@ var Player = function(data)
 	// bomb only if cooldown ok
 	var bomb = new BombModel(this,power);
 	this.bombs.push(bomb);
-	game.lastBombTime = Date.now();
 	return bomb
     }
 
@@ -98,7 +107,10 @@ var Player = function(data)
     {
 	for(var i=0; i<this.bombs.length; i++)
 	{
-	    this.bombs[i].animate();
+	    var isAlive = this.bombs[i].animate();
+	    if (!isAlive) {
+		this.bombs.splice(i);
+	    }
 	}
     }
 };

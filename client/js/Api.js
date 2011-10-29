@@ -54,6 +54,6 @@ var Api = function(game) {
     }
 
     this.bomb = function(bomb) {
-	this.socket.emit('bomb', '{"x":'+Math.round(bomb.mesh.position.x)+',"y":'+Math.round(bomb.mesh.position.y)+'}');
+	this.socket.emit('bomb', '{"x":'+Math.round(bomb.mesh.position.x)+',"y":'+Math.round(bomb.mesh.position.y)+', "p":'+bomb.power+'}');
     }
 }
