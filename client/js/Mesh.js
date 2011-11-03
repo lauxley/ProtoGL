@@ -24,10 +24,10 @@ function initScene() {
     var bordDroit =  new THREE.Mesh( new THREE.CubeGeometry( 50, 1220, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );
     var bordHaut =  new THREE.Mesh( new THREE.CubeGeometry( 1800, 50, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );
     var bordBas =  new THREE.Mesh( new THREE.CubeGeometry( 1800, 50, 10 ), new THREE.MeshLambertMaterial( { color: 0x003300 } ) );
-    bordGauche.position = new THREE.Vector3(-900, 0, 50);
-    bordDroit.position = new THREE.Vector3(900,0,50);
-    bordHaut.position = new THREE.Vector3(0,580,50); 
-    bordBas.position =  new THREE.Vector3(0,-580,50);
+    bordGauche.position = new THREE.Vector3(-900, 0, 0);
+    bordDroit.position = new THREE.Vector3(900,0,0);
+    bordHaut.position = new THREE.Vector3(0,580,0); 
+    bordBas.position =  new THREE.Vector3(0,-580,0);
     scene.addObject(bordGauche);
     scene.addObject(bordDroit);
     scene.addObject(bordHaut);
@@ -111,7 +111,6 @@ var PlayerModel = function(player)
     mesh.rotation.x = mesh.rotation.z =  3*Math.PI/2;
     mesh.position.x = player.position.x;
     mesh.position.y = player.position.y;
-    mesh.position.z = 50;
     mesh.scale.x = mesh.scale.y = mesh.scale.z = 3;
     mesh.updateMatrix();
     THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( mesh ) );
@@ -127,7 +126,7 @@ var PlayerModel = function(player)
     };
 }
 
-var ShootModel = function(player)
+var ShootModel = function(player, data)
 {
     this.inheritFrom = Model;
     this.inheritFrom();
@@ -138,10 +137,9 @@ var ShootModel = function(player)
     shoot = new THREE.Particle(material);
     shoot.owner = player.id;
     shoot.rotation.x = shoot.rotation.z =  3*Math.PI/2;
-    shoot.position.x = player.position.x
-    shoot.position.y = player.position.y
-    shoot.position.z = 50;
-    shoot.rotation.y = player.position.r; //set the direction of the shoot where the Player is facing
+    shoot.position.x = data ? data.x : player.position.x;
+    shoot.position.y = data ? data.y : player.position.y;
+    shoot.rotation.y = data ? data.r : player.position.r; //set the direction of the shoot where the Player is facing
     //shoot.rotation.x = player.rotation.x;
     //shoot.rotation.y = player.rotation.y;
     shoot.scale.x = shoot.scale.y = 3;
@@ -150,17 +148,16 @@ var ShootModel = function(player)
     game.scene.addObject(this.mesh);
 };
 	
-var BombModel = function(player,power)
+var BombModel = function(player, data)
 {
     this.inheritFrom = Model;
     this.inheritFrom();
-    this.power = power;
+    this.power = data.p;
     this.animationKey = 150 + this.power * 3; //explosion frame
     var material = new THREE.ParticleCanvasMaterial( { color: player.color, program: this.particleRender } );
     var particle = new THREE.Particle(material);
-    particle.position.x = player.position.x
-    particle.position.y = player.position.y
-    particle.position.z = 50;
+    particle.position.x = data.x ? data.x : player.position.x;
+    particle.position.y = data.y ? data.y : player.position.y;
     particle.scale.x = particle.scale.y = 3; // no need for scale.z for the time being, the bomb is flat
     
     this.mesh = particle;

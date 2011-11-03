@@ -17,6 +17,13 @@ var Player = function(data)
 
     this.destroy = function() {
 	this.model.destroy();
+	//destroy all existing objects
+	for(i=0;i<this.shoots.lenght;i++) {
+	    this.shoots[i].destroy();
+	}
+	for(i=0;i<this.bombs.lenght;i++) {
+	    this.bombs[i].destroy();
+	}
     };
 
     this.updateFromControl = function() 
@@ -27,18 +34,18 @@ var Player = function(data)
     }
 
     this.updateFromServer = function(data) 
-	{
-		this.position.x = data.x;
-		this.position.y = data.y;
-		this.position.r = data.r;
+    {
+	this.position.x = data.x;
+	this.position.y = data.y;
+	this.position.r = data.r;
 
-		this.model.updatePositions(data);
+	this.model.updatePositions(data);
     };
 
-    this.addShoot = function() 
+    this.addShoot = function(data) 
     {
         //we may need a 'Shoot' or 'Bullet' class at some point, but not for now
-        var shoot = new ShootModel(this);
+        var shoot = new ShootModel(this, data);
         this.shoots.push(shoot);
         return shoot;
     }
@@ -96,9 +103,7 @@ var Player = function(data)
 
     this.addBomb = function(power) 
     {
-	//we may need a 'Bomb' class at some point, but not for now
-	// bomb only if cooldown ok
-	var bomb = new BombModel(this,power);
+	var bomb = new BombModel(this, {"p": power });
 	this.bombs.push(bomb);
 	return bomb
     }
@@ -110,6 +115,7 @@ var Player = function(data)
 	{
 	    var isAlive = this.bombs[i].animate();
 	    if (!isAlive) {
+		this.bombs[i].destroy();
 		this.bombs.splice(i, 1);
 		i--;//OUCH
 	    }

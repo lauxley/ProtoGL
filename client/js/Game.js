@@ -4,7 +4,7 @@ var Game = function()
       is a singleton
       it is the main class of the game, that implement every other, the api, the webGL scene, the controls
     */
-    var MOVE_UPDATE_TIMER = 200; //in ms
+    var move_update_timer = 150; //in ms
 
     this.scene = null; //manage the webGL scene and its (static) content (the world)
     this.api = null; //manage the protocol and the comunication with the game server
@@ -73,9 +73,7 @@ var Game = function()
     }
 
     this.addShoot = function(data) {
-	//TODO: the current implementation place the bomb at the current 'client' player position;
-	//it should use the server's datas
-	this.players[this.playerMap[data.id]].addShoot();
+	this.players[this.playerMap[data.id]].addShoot(data);
     };
 
     this.bomb = function(bomb) {
@@ -85,12 +83,11 @@ var Game = function()
     this.addBomb = function(data) {
 	//TODO: the current implementation place the bomb at the current 'client' player position;
 	//it should use the server's datas
-	this.players[this.playerMap[data.id]].addBomb(data.p);
+	this.players[this.playerMap[data.id]].addBomb(data);
     };
 
     this.removePlayer = function(id) {
 	this.info('player leaving '+id);
-	//TODO: what about existing shoots, bombs, etc ?
 	//update the id->index map
 	for(i=this.playerMap[id]+1;i<this.players.length;i++) this.playerMap[this.players[i]] -= 1; //lol?
 	this._getPlayerById(id).destroy(); //clean destructor
@@ -160,8 +157,7 @@ var Game = function()
 	this.animate();
 	this.updateUI();
 	//TODO : IT MIGHT NOT BE A VERY GOOD IDEA TO SEND DATA IN THE MAIN LOOP (?)
-	
-	if(this.currentTime + MOVE_UPDATE_TIMER  < Date.now()) {
+	if(this.currentTime + move_update_timer  < Date.now()) {
 	    this.move();
 	    this.currentTime = Date.now();
 	}

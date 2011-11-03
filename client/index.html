@@ -76,9 +76,7 @@ jQuery(function() {
     
     //TODO: move this
     stats = new Stats();
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.bottom = '300px';
-    $('#stats').appendChild( stats.domElement );
+    $('#stats').append( stats.domElement );
 });
 
 /*Api.js //talk to the server
@@ -108,7 +106,7 @@ Game.js //merge everything
 <div id="shootCooldown" class="jauge shoot" ></div><span id="shootText" class="text shoot">SHOOT</span>
 <div id="bombCooldown" class="jauge bomb" ></div><span id="bombText" class="text bomb">BOMB</span>
 <div id="lifeJauge" class="jauge life" ></div><span id="lifeText" class="text life">LIFE</span>
-<div id="msgBoard" class="board"><span>ProtoGL<hr></span><div id="content"><div></div>
-<div id="#stats" class="stats"></stats>
+<div id="msgBoard" class="board"><span>ProtoGL<hr></span><div id="content"></div></div>
+<div id="stats" class="stats"></stats>
 </body>
 </html>
