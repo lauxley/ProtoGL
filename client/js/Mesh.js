@@ -82,7 +82,7 @@ var Model = function() {
     this.animationFrame = null; //the current state of the mesh animation, null if it is not animated
     this.animationKey = null; //depends on the mesh, and the complexity of the animation. meant to be overiden
 
-    this.mesh = null; //contain a THREE.mesh / THREE.particle / THREE.group 
+    this.mesh = null; //contains a THREE.mesh / THREE.particle / THREE.group 
 
     this.animate = function() { return; } //meant to be overiden
     this.cancelAnimation = function() { return; } //return to the initial state
@@ -115,6 +115,7 @@ var PlayerModel = function(player)
     mesh.updateMatrix();
     THREE.Collisions.colliders.push( THREE.CollisionUtils.MeshOBB( mesh ) );
     this.mesh = mesh;
+    this.mesh.owner = player;
     game.scene.addObject(this.mesh);
 
     this.updatePositions = function(data) {
@@ -135,7 +136,7 @@ var ShootModel = function(player, data)
     this.animationFrame = 0;
     material = new THREE.ParticleCanvasMaterial( { color: player.color, program: this.particleRender } );
     shoot = new THREE.Particle(material);
-    shoot.owner = player.id;
+    shoot.owner = player;
     shoot.rotation.x = shoot.rotation.z =  3*Math.PI/2;
     shoot.position.x = data ? data.x : player.position.x;
     shoot.position.y = data ? data.y : player.position.y;

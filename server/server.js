@@ -3,7 +3,6 @@ var path = require('path');
 
 
 var id = 1;
-var players = [];
 var shoots = [];
 var bombs = [];
 var sockets = {};
@@ -34,18 +33,32 @@ var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function (socket) {
     function _getPlayersInfo() {
-	l = [];
-	keys = Object.keys(sockets);
+	var l = [];
+	var keys = Object.keys(sockets);
 	for (i=0;i<keys.length;i++) { l.push(sockets[keys[i]].player); }
 	return l
+    }
+    
+    function _spawn() {
+	var x = Math.round(Math.random()*600-300);
+	var y = Math.round(Math.random()*600-300);
+	var r = Math.round(Math.random()*360); //angle
+	return {"x":x, "y":y, "r":r};
+    }
+
+    function _respawn(player) {
+	var d = _spawn();
+	player.x = d.x;
+	player.y = d.y;
+	player.r = d.r;
+	player.l = 100;
     }
 
     console.log('New client ('+socket.id+')!');
     socket.emit('info', 'welcome !');
-    var x = Math.round(Math.random()*400-200);
-    var y = Math.round(Math.random()*400-200);
-    var r = Math.round(Math.random()*360); //angle
-    var player = {"id":id, "x":x, "y":y, "r":r};
+    var s = _spawn();
+    //r = angle / l = life / p = points
+    var player = {"id":id, "x":s.x, "y":s.y, "r":s.r, "l":100, "p":0};
     socket.emit('welcome', player);
     socket.emit('players', _getPlayersInfo());
     broadcast('new_player', player, player.id);
@@ -87,6 +100,21 @@ io.sockets.on('connection', function (socket) {
 	var bomb = {"id":socket.player.id, "x":d.x, "y":d.y, "r":d.r, "p":d.p};
 	bombs.push(bombs);
 	broadcast('bomb', bomb, socket.player.id);
+    });
+
+    socket.on('hit', function(data) {
+	var d = JSON.parse(data);
+	if (!sockets[d.id]) return;
+	sockets[d.id].player.l -= 10;
+	broadcast('players', [sockets[d.id].player]);
+	if(sockets[d.id].player.l <= 0) {
+	    socket.player.p += 1;
+	    _respawn(sockets[d.id].player);
+	    //TODO: this get ugly
+	    broadcast('respawn', sockets[d.id].player);
+	    broadcast('players', [socket.player]);
+	    broadcast('info', 'Player #'+socket.player.id+' killed player #'+sockets[d.id].player.id+' !');
+	}
     });
 });
 

@@ -63,11 +63,6 @@ var Game = function()
 	this.render();
     };
 
-    this.addPlayer = function(data) {
-	this.info('New player '+data.id+' Spawn point: x='+data.x+' y='+data.y);
-	this.playerMap[data.id] = this.players.push(new Player(data))-1;
-    };
-
     this.shoot = function (shoot) {
 	this.api.shoot(shoot);
     }
@@ -81,15 +76,25 @@ var Game = function()
     }
 
     this.addBomb = function(data) {
-	//TODO: the current implementation place the bomb at the current 'client' player position;
-	//it should use the server's datas
 	this.players[this.playerMap[data.id]].addBomb(data);
+    };
+
+    this.hit = function(player) {
+	this.api.hit(player);
+    }
+
+    this.addPlayer = function(data) {
+	this.info('New player #'+data.id+' Spawn point: x='+data.x+' y='+data.y);
+	$('#players').append('<div id="player_'+data.id+'" class="player">#'+data.id+': <span class="score">'+data.p+'</span><div class="plife"></div></div>');
+	this.playerMap[data.id] = this.players.push(new Player(data))-1;
     };
 
     this.removePlayer = function(id) {
 	this.info('player leaving '+id);
 	//update the id->index map
-	for(i=this.playerMap[id]+1;i<this.players.length;i++) this.playerMap[this.players[i]] -= 1; //lol?
+	$("#player_"+id).remove();
+	for(i=this.playerMap[id]+1;i<this.players.length;i++) 
+	    this.playerMap[this.players[i]] -= 1; //lol?
 	this._getPlayerById(id).destroy(); //clean destructor
 	this.players.splice(this.playerMap[id], 1);
 	delete this.playerMap[id];
@@ -102,11 +107,23 @@ var Game = function()
 	    {
 		if(this.playerMap[data[i].id] == undefined) {
 		    this.addPlayer(data[i]);
-		}
-		else {
+		} else {
 		    this.players[this.playerMap[data[i].id]].updateFromServer(data[i]);
 		}
+	    } else {
+		//we update life
+		console.log(data[i]);
+		this.me.life = data[i].l;
+		this.me.score = data[i].p;
 	    }
+	}
+    };
+
+    this.respawn = function(data) {
+	if (data.id == this.me.id) {
+	    this.me.updateFromServer(data)
+	} else {
+	    this.players[this.playerMap[data.id]].updateFromServer(data);
 	}
     };
 
@@ -148,7 +165,14 @@ var Game = function()
 	    if(bombCooldown > 75)
 		$("#bombCooldown > div").css({ 'background': '#0f0' });
 	}
+	
+	$("#lifeJauge").progressbar({ value: this.me.life });
+	$("#score").html('Score : '+this.me.score);
 
+	for (var i=0; i<this.players.length;i++) {
+	    $(".plife", '#player_'+this.players[i].id).progressbar({ value: this.players[i].life });
+	    $(".score", '#player_'+this.players[i].id).html(this.players[i].score);
+	}
     }
 
     this.render = function() {

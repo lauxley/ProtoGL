@@ -1,19 +1,20 @@
 // initialisation des particules des joueurs
 var Player = function(data) 
 {
-	var _randColor = function() 
-	{
-		return Math.floor(Math.random()*16777215);
+    var _randColor = function() 
+    {
+	return Math.floor(Math.random()*16777215);
     }
 
     this.id = data.id;
     this.position = {"x":data.x, "y":data.y, "r":data.r};
     this.shoots = [];
     this.bombs = [];
+    this.life = 100; //start with 10 health
+    this.score = 0;
     this.color = _randColor();
 
     this.model = new PlayerModel(this);
-
 
     this.destroy = function() {
 	this.model.destroy();
@@ -28,6 +29,7 @@ var Player = function(data)
 
     this.updateFromControl = function() 
     {
+	//ideally should be the contrary ? from the player position to the model ?
 	this.position.x = this.model.mesh.position.x;
 	this.position.y = this.model.mesh.position.y;
 	this.position.r = this.model.mesh.rotation.y;
@@ -38,7 +40,8 @@ var Player = function(data)
 	this.position.x = data.x;
 	this.position.y = data.y;
 	this.position.r = data.r;
-
+	this.life = data.l;
+	this.score = data.p;
 	this.model.updatePositions(data);
     };
 
@@ -80,26 +83,25 @@ var Player = function(data)
         }
     }
 	
-	this.testForImpact = function(shoot)
-	{
+    this.testForImpact = function(shoot)
+    {
         var rayX = -50 * Math.sin(shoot.mesh.rotation.y);
         var rayY = -50 * Math.cos(shoot.mesh.rotation.y);
         var ray = new THREE.Ray( shoot.mesh.position, new THREE.Vector3( rayX, rayY, 50 ) );
         var collision = THREE.Collisions.rayCastNearest( ray );
         if (collision && Math.abs(collision.distance) < 50 && collision.distance != -1)
         {
-            // remove life only if shooter_id != me
-            if (shoot.mesh.owner != game.me.id)
+            if (collision.mesh.owner)
             {
-                var life = $("#lifeJauge").progressbar( "option", "value" );
-                life = life - 10;
-                $("#lifeJauge").progressbar({ value: life });
+		if (shoot.mesh.owner == game.me) {
+		    game.hit(collision.mesh.owner);
+		}
             }
+
             return true;
         }
         return false;
-
-	}
+    }
 
     this.addBomb = function(power) 
     {

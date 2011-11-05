@@ -29,7 +29,7 @@ var Api = function(game) {
 	if (game.initialized) { //to avoid trying to initialize players if the scene is not done.
 	    game.updatePlayers(data);	    
 	} else {
-	    $(document).bind("initialized", function() { game.updatePlayers(data); }) 
+	    $(document).bind("initialized", function() { game.updatePlayers(data); });
 	}
     });
 
@@ -41,9 +41,17 @@ var Api = function(game) {
 	game.addBomb(data);
     });
 
-    this.socket.on('this.info', function (data) {
+    this.socket.on('info', function (data) {
         game.info(data);
     });
+
+    this.socket.on('respawn', function(data) {
+	game.respawn(data);
+    });
+
+    this.hit = function(player) {
+	this.socket.emit('hit', '{"id":'+player.id+'}');
+    }
 
     this.move = function(x, y, r) {
 	this.socket.emit('move', '{"x":'+Math.round(x)+',"y":'+Math.round(y)+',"r":'+Math.round(r*1000)/1000+'}');
